@@ -5,9 +5,14 @@
  * Written by Ivan Klimchuk <ivan@klimchuk.com>, 2021
  */
 
-set_time_limit(0);
-error_reporting(E_ALL | E_STRICT); ini_set('display_errors',true);
+declare(strict_types = 1);
 
+use function alroniks\mspoplati\helpers\xml\xmlToArray;
+use function alroniks\mspoplati\helpers\xml\arrayToXml;
+
+set_time_limit(0);
+error_reporting(E_ALL | E_STRICT);
+ini_set('display_errors','On');
 ini_set('date.timezone', 'Europe/Minsk');
 
 define('PKG_NAME', 'mspOplati');
@@ -15,10 +20,13 @@ define('PKG_NAME_LOWER', strtolower(PKG_NAME));
 define('PKG_VERSION', '0.2.0');
 define('PKG_RELEASE', 'dev');
 
+$composer = json_decode(file_get_contents(__DIR__ . '/composer.json'), false, 512, JSON_THROW_ON_ERROR);
+
 define('PKG_SUPPORTS_PHP', '7.4');
 define('PKG_SUPPORTS_MODX', '2.8');
 define('PKG_SUPPORTS_MS2', '2.5');
 
+require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/vendor/modx/revolution/core/xpdo/xpdo.class.php';
 
 /* instantiate xpdo instance */
@@ -81,49 +89,46 @@ $xpdo->loadClass('transport.xPDOObjectVehicle', XPDO_CORE_PATH, true, true);
 $xpdo->loadClass('transport.xPDOFileVehicle', XPDO_CORE_PATH, true, true);
 $xpdo->loadClass('transport.xPDOScriptVehicle', XPDO_CORE_PATH, true, true);
 
-require_once __DIR__ . '/helpers/ArrayXMLConverter.php';
-//require_once __DIR__ . '/implants/encryptedvehicle.class.php';
+$credentials = file_get_contents(__DIR__ . '/../.encryption');
+if ($credentials) {
+    [$username, $key] = explode(':', $credentials);
+}
 
-//$credentials = file_get_contents(__DIR__ . '/../.encryption');
-//if ($credentials) {
-//    [$username, $key] = explode(':', $credentials);
-//}
-//
-//if (empty($username) || empty($key)) {
-//    $xpdo->log(xPDO::LOG_LEVEL_ERROR, 'Credentials not found');
-//    exit;
-//}
+if (empty($username) || empty($key)) {
+    $xpdo->log(xPDO::LOG_LEVEL_ERROR, 'Credentials not found');
+    exit;
+}
 
-//$params = [
-//    'api_key' => trim($key),
-//    'username' => trim($username),
-//    'http_host' => 'anysite.local.docker',
-//    'package' => PKG_NAME_LOWER,
-//    'version' => PKG_VERSION . '-' . PKG_RELEASE,
-//    'vehicle_version' => '2.0.0'
-//];
+$params = [
+    'api_key' => trim($key),
+    'username' => trim($username),
+    'http_host' => 'anysite.local.docker',
+    'package' => PKG_NAME_LOWER,
+    'version' => PKG_VERSION . '-' . PKG_RELEASE,
+    'vehicle_version' => '2.0.0'
+];
 
-//$ch = curl_init();
-//curl_setopt($ch, CURLOPT_URL, 'https://modstore.pro/extras/package/encode');
-//curl_setopt($ch, CURLOPT_POST, 1);
-//curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/xml']);
-//curl_setopt($ch, CURLOPT_POSTFIELDS, ArrayXMLConverter::toXML($params,'request'));
-//curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-//curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-//curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-//$result = trim(curl_exec($ch));
-//curl_close($ch);
-//
-//$answer = ArrayXMLConverter::toArray($result);
-//
-//if (isset($answer['message'])) {
-//    $xpdo->log(xPDO::LOG_LEVEL_ERROR, $answer['message']);
-//    exit;
-//}
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, 'https://modstore.pro/extras/package/encode');
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/xml']);
+curl_setopt($ch, CURLOPT_POSTFIELDS, arrayToXml(['request' => $params])->outputMemory());
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+$xml = trim(curl_exec($ch));
+curl_close($ch);
 
-//$xpdo->log(xPDO::LOG_LEVEL_INFO, 'Encryption key is: '. $answer['key']);
+$answer = xmlToArray($xml);
 
-//define('PKG_ENCODE_KEY', $answer['key']);
+if (isset($answer['message'])) {
+    $xpdo->log(xPDO::LOG_LEVEL_ERROR, $answer['message']);
+    exit;
+}
+
+$xpdo->log(xPDO::LOG_LEVEL_INFO, 'Encryption key is: '. $answer['key']);
+
+define('PKG_ENCODE_KEY', $answer['key']);
 
 $package = new xPDOTransport($xpdo, $signature, $directory);
 
@@ -135,28 +140,28 @@ $xpdo->loadClass(modPrincipal::class);
 $xpdo->loadClass(modElement::class);
 $xpdo->loadClass(modScript::class);
 
-//$package->put(
-//    [
-//        'source' => $sources['implants'] . 'encryptedvehicle.class.php',
-//        'target' => "return MODX_CORE_PATH . 'components/" . PKG_NAME_LOWER . "/';",
-//    ],
-//    ['vehicle_class' => xPDOFileVehicle::class]
-//);
+$package->put(
+    [
+        'source' => $sources['implants'] . 'helpers/xml.php',
+        'target' => "return MODX_CORE_PATH . 'components/" . PKG_NAME_LOWER . "/';"
+    ],
+    ['vehicle_class' => xPDOFileVehicle::class]
+);
 
-//$package->put(
-//    [
-//        'source' => $sources['helpers'] . 'ArrayXMLConverter.php',
-//        'target' => "return MODX_CORE_PATH . 'components/" . PKG_NAME_LOWER . "/';",
-//    ],
-//    ['vehicle_class' => xPDOFileVehicle::class]
-//);
+$package->put(
+    [
+        'source' => $sources['implants'] . 'encryptedvehicle.class.php',
+        'target' => "return MODX_CORE_PATH . 'components/" . PKG_NAME_LOWER . "/';",
+    ],
+    ['vehicle_class' => xPDOFileVehicle::class]
+);
 
-//$package->put(
-//    [
-//        'source' => $sources['resolvers'] . 'resolve.encryption.php',
-//    ],
-//    ['vehicle_class' => xPDOScriptVehicle::class]
-//);
+$package->put(
+    ['source' => $sources['resolvers'] . 'resolve.encryption.php'],
+    ['vehicle_class' => xPDOScriptVehicle::class]
+);
+
+class EncryptedVehicle extends xPDOObjectVehicle {}
 
 $namespace = $xpdo->newObject(modNamespace::class);
 $namespace->set('name', PKG_NAME_LOWER);
@@ -166,16 +171,24 @@ $namespace->fromArray([
 ]);
 
 $package->put($namespace, [
-//    'vehicle_class' => EncryptedVehicle::class,
+    'vehicle_class' => EncryptedVehicle::class,
     xPDOTransport::UNIQUE_KEY => 'name',
     xPDOTransport::PRESERVE_KEYS => true,
-    xPDOTransport::UPDATE_OBJECT => true
+    xPDOTransport::UPDATE_OBJECT => true,
+    xPDOTransport::ABORT_INSTALL_ON_VEHICLE_FAIL => true,
+    'validate' => [
+        ['type' => 'php', 'source' => $sources['validators'] . 'validate.phpversion.php'],
+        ['type' => 'php', 'source' => $sources['validators'] . 'validate.modxversion.php'],
+
+        ['type' => 'php', 'source' => $sources['validators'] . 'validate.bcmath.php'],
+        // todo: add all required extensions from composer
+    ]
 ]);
 
 $settings = include $sources['data'] . 'settings.php';
 foreach ($settings as $setting) {
     $package->put($setting, [
-//        'vehicle_class' => EncryptedVehicle::class,
+        'vehicle_class' => EncryptedVehicle::class,
         xPDOTransport::UNIQUE_KEY => 'key',
         xPDOTransport::PRESERVE_KEYS => true,
         xPDOTransport::UPDATE_OBJECT => true,
@@ -187,13 +200,7 @@ foreach ($settings as $setting) {
 $category = $xpdo->newObject(modCategory::class);
 $category->fromArray(['id' => 1, 'category' => PKG_NAME, 'parent' => 0]);
 
-$validators = [];
-array_push($validators,
-    ['type' => 'php', 'source' => $sources['validators'] . 'validate.phpversion.php'],
-    ['type' => 'php', 'source' => $sources['validators'] . 'validate.modxversion.php'],
-    ['type' => 'php', 'source' => $sources['validators'] . 'validate.bcmath.php']
-);
-
+// move it to files transports
 $resolvers = [];
 foreach ($sources['assets'] as $file) {
     $directory = dirname($file);
@@ -223,9 +230,9 @@ $package->put($category, [
     xPDOTransport::ABORT_INSTALL_ON_VEHICLE_FAIL => true,
     xPDOTransport::RELATED_OBJECTS => false,
     xPDOTransport::NATIVE_KEY => true,
+    xPDOTransport::RESOLVE_FILES => false,
     'package' => 'modx',
-    'resolve' => $resolvers,
-    'validate' => $validators
+    'resolve' => $resolvers
 ]);
 
 $package->setAttribute('changelog', file_get_contents($root . 'CHANGELOG.md'));

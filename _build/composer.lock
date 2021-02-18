@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4787f72c40bddc54b9c53e9a51fd07c5",
+    "content-hash": "fc30743b71c520bb8f6a32a4850cfbeb",
     "packages": [],
     "packages-dev": [
         {
@@ -61,6 +61,15 @@
                 "routing",
                 "templating"
             ],
+            "support": {
+                "chat": "https://modx.org/",
+                "docs": "https://docs.modx.com/",
+                "email": "help@modx.com",
+                "forum": "https://community.modx.com/",
+                "irc": "irc://irc.freenode.org/modx",
+                "issues": "https://github.com/modxcms/revolution/issues/",
+                "source": "https://github.com/modxcms/revolution/"
+            },
             "time": "2020-10-22T15:51:51+00:00"
         }
     ],
@@ -69,7 +78,15 @@
     "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-pdo": "*",
+        "ext-curl": "*",
+        "ext-simplexml": "*",
+        "ext-json": "*",
+        "ext-xmlwriter": "*",
+        "ext-bcmath": "*",
+        "ext-openssl": "*"
+    },
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.0.0"
 }

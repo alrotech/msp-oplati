@@ -2,8 +2,15 @@
 /**
  * Copyright (c) Ivan Klimchuk - All Rights Reserved
  * Unauthorized copying, changing, distributing this file, via any medium, is strictly prohibited.
- * Written by Ivan Klimchuk <ivan@klimchuk.com>, 2019
+ * Written by Ivan Klimchuk <ivan@klimchuk.com>, 2021
  */
+
+declare(strict_types = 1);
+
+require_once __DIR__ . '/xml.php';
+
+use function alroniks\mspoplati\helpers\xml\xmlToArray;
+use function alroniks\mspoplati\helpers\xml\arrayToXml;
 
 /**
  * Class EncryptedVehicle
@@ -179,8 +186,6 @@ class EncryptedVehicle extends xPDOObjectVehicle
                 }
             } else {
 
-                include_once __DIR__ . '/ArrayXMLConverter.php';
-
                 $credentials = file_get_contents(sprintf('%spkg/%s/.encryption', MODX_BASE_PATH, $package->package_name));
 
                 $username = $secret = '';
@@ -203,14 +208,14 @@ class EncryptedVehicle extends xPDOObjectVehicle
                 curl_setopt($ch, CURLOPT_URL, sprintf('https://modstore.pro/extras/%s', $endpoint));
                 curl_setopt($ch, CURLOPT_POST, 1);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/xml']);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, ArrayXMLConverter::toXML($params, 'request'));
+                curl_setopt($ch, CURLOPT_POSTFIELDS, arrayToXml(['request' => $params]));
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
                 $result = trim(curl_exec($ch));
                 curl_close($ch);
 
-                $answer = ArrayXMLConverter::toArray($result);
+                $answer = xmlToArray($result);
 
                 $key = $answer['key'];
             }

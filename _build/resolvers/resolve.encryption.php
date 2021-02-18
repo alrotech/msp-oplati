@@ -2,8 +2,10 @@
 /**
  * Copyright (c) Ivan Klimchuk - All Rights Reserved
  * Unauthorized copying, changing, distributing this file, via any medium, is strictly prohibited.
- * Written by Ivan Klimchuk <ivan@klimchuk.com>, 2019
+ * Written by Ivan Klimchuk <ivan@klimchuk.com>, 2021
  */
+
+declare(strict_types = 1);
 
 /** @var xPDOTransport $transport */
 $transport->xpdo->loadClass('transport.xPDOObjectVehicle', XPDO_CORE_PATH, true, true);

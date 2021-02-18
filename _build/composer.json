@@ -9,12 +9,22 @@
       "email": "ivan@klimchuk.com"
     }
   ],
+  "autoload": {
+    "files": ["implants/helpers/xml.php"]
+  },
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require-dev": {
     "modx/revolution": "~2.0"
   },
   "require": {
-    "ext-pdo": "*"
+    "php": ">=7.4",
+    "ext-pdo": "*",
+    "ext-curl": "*",
+    "ext-simplexml": "*",
+    "ext-json": "*",
+    "ext-xmlwriter": "*",
+    "ext-bcmath": "*",
+    "ext-openssl": "*"
   }
 }
