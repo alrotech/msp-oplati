@@ -5,14 +5,17 @@
  * Written by Ivan Klimchuk <ivan@klimchuk.com>, 2021
  */
 
-if (!$object->xpdo && !$object->xpdo instanceof modX) {
+/** @var xPDOTransport $transport */
+/** @var array $options */
+
+if (!$transport->xpdo && !$transport->xpdo instanceof modX) {
     return true;
 }
 
 switch ($options[xPDOTransport::PACKAGE_ACTION]) {
     case xPDOTransport::ACTION_INSTALL:
 
-        $object->xpdo->newObject(
+        $transport->xpdo->newObject(
             msPayment::class,
             [
                 'name' => 'Oplati',
@@ -30,7 +33,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 
     case xPDOTransport::ACTION_UPGRADE:
 
-        $collection = $object->xpdo->getCollection(msPayment::class, ['class' => 'Oplati']);
+        $collection = $transport->xpdo->getCollection(msPayment::class, ['class' => 'Oplati']);
 
         /** @var msPayment $item */
         foreach ($collection as $item) {
@@ -44,7 +47,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 
     case xPDOTransport::ACTION_UNINSTALL:
 
-        $object->xpdo->removeObject(msPayment::class, ['class' => 'Oplati']);
+        $transport->xpdo->removeObject(msPayment::class, ['class' => 'Oplati']);
 
         break;
 }
