@@ -29,16 +29,60 @@ class Oplati extends ConfigurablePaymentHandler
     public const OPTION_FAILURE_PAGE = 'failure_page';
     public const OPTION_UNPAID_PAGE = 'unpaid_page';
 
-    /** @var modX */
-    public $modx;
-
-    public function __construct()
+    public function __construct(xPDOObject $object, array $config = [])
     {
+        parent::__construct($object, $config);
 
+        $this->config = $config;
     }
 
     public static function getPrefix(): string
     {
         return strtolower(__CLASS__);
+    }
+
+    public function send(msOrder $order)
+    {
+        if (!$link = $this->getPaymentLink($order)) {
+            return $this->error('Token and redirect url can not be requested. Please, look at error log.');
+        }
+
+        return $this->success('', ['redirect' => $link]);
+    }
+
+    public function getPaymentLink(msOrder $order)
+    {
+        /** @var msPayment $payment */
+        $payment = $order->getOne('Payment');
+
+        /** @var msDelivery $delivery */
+        $delivery = $order->getOne('Delivery');
+
+        /** @var modUser $user */
+        $user = $order->getOne('User');
+
+        if ($user) {
+            /** @var modUserProfile $user */
+            $user = $user->getOne('Profile');
+        }
+
+        $this->config = $this->getProperties($payment);
+        $this->adjustCheckoutUrls();
+
+
+        // нужно сходить на сервер и получить qr-код или ссылку.
+        // нужно показать окно для оплаты, куда передать параметры платежа
+        // там вызвать снипет на странице, где показывать код или ссылку
+        // и сделать обновление регулярное через js-скрипты
+        
+        return 'https://modx.by';
+
+    }
+
+    public function adjustCheckoutUrls(): void
+    {
+        if ($this->config[self::OPTION_DEVELOPER_MODE]) {
+            $this->config[self::OPTION_GATEWAY_URL] = $this->config[self::OPTION_GATEWAY_URL_TEST];
+        }
     }
 }
