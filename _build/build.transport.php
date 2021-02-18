@@ -15,18 +15,16 @@ error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors','On');
 ini_set('date.timezone', 'Europe/Minsk');
 
-define('PKG_NAME', 'mspOplati');
-define('PKG_NAME_LOWER', strtolower(PKG_NAME));
-define('PKG_VERSION', '0.2.0');
-define('PKG_RELEASE', 'dev');
-
-$composer = json_decode(file_get_contents(__DIR__ . '/composer.json'), false, 512, JSON_THROW_ON_ERROR);
-
-define('PKG_SUPPORTS_PHP', '7.4');
-define('PKG_SUPPORTS_MODX', '2.8');
-define('PKG_SUPPORTS_MS2', '2.5');
-
 require_once __DIR__ . '/vendor/autoload.php';
+
+$composer = json_decode(file_get_contents(__DIR__ . '/composer.json'), true, 512, JSON_THROW_ON_ERROR);
+
+[, $package] = explode('/', $composer['name']);
+
+define('PKG_NAME_LOWER', $package);
+define('PKG_VERSION', $composer['version']);
+define('PKG_RELEASE', $composer['minimum-stability']);
+
 require_once __DIR__ . '/vendor/modx/revolution/core/xpdo/xpdo.class.php';
 
 /* instantiate xpdo instance */
@@ -177,11 +175,7 @@ $package->put($namespace, [
     xPDOTransport::UPDATE_OBJECT => true,
     xPDOTransport::ABORT_INSTALL_ON_VEHICLE_FAIL => true,
     'validate' => [
-        ['type' => 'php', 'source' => $sources['validators'] . 'validate.phpversion.php'],
-        ['type' => 'php', 'source' => $sources['validators'] . 'validate.modxversion.php'],
-
-        ['type' => 'php', 'source' => $sources['validators'] . 'validate.bcmath.php'],
-        // todo: add all required extensions from composer
+        ['type' => 'php', 'source' => $sources['validators'] . 'validate.phpextensions.php']
     ]
 ]);
 
@@ -198,7 +192,7 @@ foreach ($settings as $setting) {
 }
 
 $category = $xpdo->newObject(modCategory::class);
-$category->fromArray(['id' => 1, 'category' => PKG_NAME, 'parent' => 0]);
+$category->fromArray(['id' => 1, 'category' => PKG_NAME_LOWER, 'parent' => 0]);
 
 // move it to files transports
 $resolvers = [];
@@ -222,6 +216,8 @@ foreach ($sources['core'] as $file) {
 $resolvers[] = ['type' => 'php', 'source' => $sources['resolvers'] . 'resolve.service.php'];
 $resolvers[] = ['type' => 'php', 'source' => $sources['resolvers'] . 'resolve.payment.php'];
 
+// remove category as useless element
+
 $package->put($category, [
 //    'vehicle_class' => EncryptedVehicle::class,
     xPDOTransport::UNIQUE_KEY => 'category',
@@ -239,9 +235,9 @@ $package->setAttribute('changelog', file_get_contents($root . 'CHANGELOG.md'));
 $package->setAttribute('license', file_get_contents($root . 'LICENSE'));
 $package->setAttribute('readme', file_get_contents($root . 'README.md'));
 $package->setAttribute('requires', [
-    'php' => '>=' . PKG_SUPPORTS_PHP,
-    'modx' => '>=' . PKG_SUPPORTS_MODX,
-    'miniShop2' => '>=' . PKG_SUPPORTS_MS2,
+    'php' => '>=7.4',
+    'modx' => '>=2.0',
+    'miniShop2' => '>=2.5',
     'msPaymentProps' => '>=0.3.4-stable'
 ]);
 

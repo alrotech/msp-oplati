@@ -14,10 +14,30 @@ if (!$transport->xpdo) {
     return false;
 }
 
-if (!extension_loaded('bcmath')) {
-    $transport->xpdo->log(modX::LOG_LEVEL_ERROR, 'Extension BC Math (http://php.net/manual/en/book.bc.php) does not loaded. This extension is required for accurate calculations of money amounts.');
+$extensions = [
+    'pdo' => 'PHP Data Objects',
+    'curl' => 'Client URL Library',
+    'simplexml' => 'SimpleXML',
+    'json' => 'JavaScript Object Notation',
+    'xmlwriter' => 'XMLWriter',
+    'bcmath' => 'BCMath Arbitrary Precision Mathematics',
+    'openssl' => 'OpenSSL'
+];
 
-    return false;
+foreach ($extensions as $ext => $title) {
+    if (!extension_loaded($ext)) {
+        $msg = sprintf('
+            PHP extension `%s` (http://php.net/manual/en/book.%s.php) does not loaded. 
+            This PHP extension is required for a proper work of this package.
+            Please, ask your sysadmin or hosting company to install and configure it before continue.',
+            $title, $ext === 'bcmath' ? 'bc' : $ext
+        );
+
+        $transport->xpdo->log(modX::LOG_LEVEL_ERROR, $msg);
+
+        return false;
+    }
 }
+
 
 return true;
