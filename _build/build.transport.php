@@ -12,11 +12,11 @@ ini_set('date.timezone', 'Europe/Minsk');
 
 define('PKG_NAME', 'mspOplati');
 define('PKG_NAME_LOWER', strtolower(PKG_NAME));
-define('PKG_VERSION', '0.1.0');
+define('PKG_VERSION', '0.2.0');
 define('PKG_RELEASE', 'dev');
 
-define('PKG_SUPPORTS_PHP', '7.2');
-define('PKG_SUPPORTS_MODX', '2.7');
+define('PKG_SUPPORTS_PHP', '7.4');
+define('PKG_SUPPORTS_MODX', '2.8');
 define('PKG_SUPPORTS_MS2', '2.5');
 
 require_once __DIR__ . '/vendor/modx/revolution/core/xpdo/xpdo.class.php';
@@ -159,33 +159,30 @@ $xpdo->loadClass(modScript::class);
 //);
 
 $namespace = $xpdo->newObject(modNamespace::class);
+$namespace->set('name', PKG_NAME_LOWER);
 $namespace->fromArray([
-    'id' => PKG_NAME_LOWER,
-    'name' => PKG_NAME_LOWER,
     'path' => '{core_path}components/' . PKG_NAME_LOWER . '/',
-    'assets_path' => '{assets_path}components/' . PKG_NAME_LOWER . '/',
+    'assets_path' => '{assets_path}components/' . PKG_NAME_LOWER . '/'
 ]);
 
 $package->put($namespace, [
 //    'vehicle_class' => EncryptedVehicle::class,
     xPDOTransport::UNIQUE_KEY => 'name',
     xPDOTransport::PRESERVE_KEYS => true,
-    xPDOTransport::UPDATE_OBJECT => true,
-    xPDOTransport::NATIVE_KEY => PKG_NAME_LOWER,
-    'namespace' => PKG_NAME_LOWER
+    xPDOTransport::UPDATE_OBJECT => true
 ]);
 
-//$settings = include $sources['data'] . 'transport.settings.php';
-//foreach ($settings as $setting) {
-//    $package->put($setting, [
+$settings = include $sources['data'] . 'settings.php';
+foreach ($settings as $setting) {
+    $package->put($setting, [
 //        'vehicle_class' => EncryptedVehicle::class,
-//        xPDOTransport::UNIQUE_KEY => 'key',
-//        xPDOTransport::PRESERVE_KEYS => true,
-//        xPDOTransport::UPDATE_OBJECT => false,
-//        'class' => modSystemSetting::class,
-//        'namespace' => PKG_NAME_LOWER
-//    ]);
-//}
+        xPDOTransport::UNIQUE_KEY => 'key',
+        xPDOTransport::PRESERVE_KEYS => true,
+        xPDOTransport::UPDATE_OBJECT => true,
+        'class' => modSystemSetting::class,
+        'namespace' => PKG_NAME_LOWER
+    ]);
+}
 
 $category = $xpdo->newObject(modCategory::class);
 $category->fromArray(['id' => 1, 'category' => PKG_NAME, 'parent' => 0]);
@@ -194,7 +191,7 @@ $validators = [];
 array_push($validators,
     ['type' => 'php', 'source' => $sources['validators'] . 'validate.phpversion.php'],
     ['type' => 'php', 'source' => $sources['validators'] . 'validate.modxversion.php'],
-    ['type' => 'php', 'source' => $sources['validators'] . 'validate.bcmath.php'],
+    ['type' => 'php', 'source' => $sources['validators'] . 'validate.bcmath.php']
 );
 
 $resolvers = [];

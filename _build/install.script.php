@@ -9,6 +9,7 @@ define('MODX_API_MODE', true);
 
 require_once __DIR__ . '/../../../index.php';
 
+/** @var modX $modx */
 $modx->initialize('mgr');
 
 $modx->setLogLevel(xPDO::LOG_LEVEL_INFO);
@@ -16,7 +17,7 @@ $modx->setLogTarget();
 
 $modx->runProcessor('workspace/packages/scanlocal');
 $answer = $modx->runProcessor('workspace/packages/install',
-    ['signature' => 'mspoplati-0.1.0-dev']
+    ['signature' => 'mspOplati-0.2.0-dev']
 );
 
 $response = $answer->getResponse();

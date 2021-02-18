@@ -13,5 +13,8 @@
   "prefer-stable": true,
   "require-dev": {
     "modx/revolution": "~2.0"
+  },
+  "require": {
+    "ext-pdo": "*"
   }
 }
