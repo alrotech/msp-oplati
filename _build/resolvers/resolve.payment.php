@@ -21,7 +21,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
                 'name' => 'Oplati',
                 'description' => null,
                 'price' => 0,
-                'logo' => MODX_ASSETS_URL . 'components/mspoplati/oplati.png',
+//                'logo' => MODX_ASSETS_URL . 'components/mspoplati/oplati.png',
                 'rank' => 0,
                 'active' => 1,
                 'class' => 'Oplati',
@@ -38,7 +38,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         /** @var msPayment $item */
         foreach ($collection as $item) {
             if (!$item->get('logo')) {
-                $item->set('logo', MODX_ASSETS_URL . 'components/mspoplati/oplati.png');
+//                $item->set('logo', MODX_ASSETS_URL . 'components/mspoplati/oplati.png');
                 $item->save();
             }
         }
