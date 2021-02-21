@@ -17,7 +17,7 @@ $modx->setLogTarget();
 
 $modx->runProcessor('workspace/packages/scanlocal');
 $answer = $modx->runProcessor('workspace/packages/install',
-    ['signature' => 'mspOplati-0.2.0-dev']
+    ['signature' => 'mspoplati-0.3.0-dev']
 );
 
 $response = $answer->getResponse();
