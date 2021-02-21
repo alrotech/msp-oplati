@@ -7,6 +7,13 @@
 
 declare(strict_types = 1);
 
+use Detection\MobileDetect;
+use GuzzleHttp\Client;
+use Fig\Http\Message\RequestMethodInterface as Method;
+use Lmc\HttpConstants\Header;
+
+require_once __DIR__ . '/vendor/autoload.php';
+
 if (!class_exists('ConfigurablePaymentHandler')) {
     $path = MODX_CORE_PATH. 'components/mspaymentprops/ConfigurablePaymentHandler.class.php';
     if (is_readable($path)) {
@@ -16,15 +23,26 @@ if (!class_exists('ConfigurablePaymentHandler')) {
 
 class Oplati extends ConfigurablePaymentHandler
 {
+    // area zero
     public const OPTION_CASH_REGISTER_NUMBER = 'cash_register_number';
     public const OPTION_CASH_PASSWORD = 'cash_password';
 
+    // area?
     public const OPTION_GATEWAY_URL = 'gateway_url';
     public const OPTION_GATEWAY_URL_TEST = 'gateway_url_test';
     public const OPTION_DEVELOPER_MODE = 'developer_mode';
 
+    // receipt area
+    public const OPTION_TITLE_TEXT = 'title_text';
+    public const OPTION_HEADER_TEXT = 'receipt_header_text';
+    public const OPTION_FOOTER_TEXT = 'receipt_footer_text';
+    public const OPTION_PRINT_CASH_REGISTER_NUMBER = 'print_crn';
+
+    // area one
     public const OPTION_SUCCESS_STATUS = 'success_status';
     public const OPTION_FAILURE_STATUS = 'failure_status';
+
+    // pages
     public const OPTION_SUCCESS_PAGE = 'success_page';
     public const OPTION_FAILURE_PAGE = 'failure_page';
     public const OPTION_UNPAID_PAGE = 'unpaid_page';
@@ -55,28 +73,58 @@ class Oplati extends ConfigurablePaymentHandler
         /** @var msPayment $payment */
         $payment = $order->getOne('Payment');
 
-        /** @var msDelivery $delivery */
-        $delivery = $order->getOne('Delivery');
-
-        /** @var modUser $user */
-        $user = $order->getOne('User');
-
-        if ($user) {
-            /** @var modUserProfile $user */
-            $user = $user->getOne('Profile');
-        }
-
         $this->config = $this->getProperties($payment);
         $this->adjustCheckoutUrls();
 
+        $client = new Client(['base_uri' => $this->config[self::OPTION_GATEWAY_URL]]);
 
-        // нужно сходить на сервер и получить qr-код или ссылку.
-        // нужно показать окно для оплаты, куда передать параметры платежа
-        // там вызвать снипет на странице, где показывать код или ссылку
-        // и сделать обновление регулярное через js-скрипты
+        $items = array_values(array_map(static function (msOrderProduct $product) {
+            return [
+                'type' => 1,
+                'name' => $product->get('name'),
+                'price' => $product->get('price'),
+                'quantity' => $product->get('count'),
+                'cost' => $product->get('cost'),
+            ];
+        }, $this->modx->getCollection(msOrderProduct::class, ['order_id' => $order->get('id')])));
 
-        return 'https://modx.by';
+        // todo: replace by dto or vo
+        $request = [
+            'sum' => $order->get('cost'),
+            'orderNumber' => $order->get('id'),
+            'details' => [
+                'receiptNumber' => $order->get('num'),
+                'regNum' => $this->config[self::OPTION_PRINT_CASH_REGISTER_NUMBER] ? $this->config[self::OPTION_CASH_REGISTER_NUMBER] : '',
+                'items' => $items,
+                'amountTotal' => $order->get('cost'),
+                'title' => $this->config[self::OPTION_TITLE_TEXT],
+                'headerInfo' => $this->config[self::OPTION_HEADER_TEXT],
+                'footerInfo' => $this->config[self::OPTION_FOOTER_TEXT],
+            ],
+//            'successUrl' => '',
+//            'failureUrl' => ''
+        ];
 
+        $response = $client->request(Method::METHOD_POST, 'pos/webPayments', [
+            'headers' => [
+                'regNum' => $this->config[self::OPTION_CASH_REGISTER_NUMBER],
+                'password' => $this->config[self::OPTION_CASH_PASSWORD],
+                Header::CONTENT_TYPE => 'application/json',
+            ],
+            'json' => $request
+        ]);
+
+        $answer = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+
+        $detect = new MobileDetect();
+        if ($detect->isTablet() || $detect->isMobile()) {
+//            return 'https://getapp.o-plati.by/map/'. http_build_query(['app_link' => $data['dynamicQR']]);
+            return 'https://getapp.o-plati.by/map/?app_link=' . $answer['dynamicQR'];
+        }
+
+        echo $answer['dynamicQR'];
+
+        return '';
     }
 
     public function adjustCheckoutUrls(): void
