@@ -49,15 +49,8 @@ $sources = [
     'helpers' => $root . '_build/helpers/',
     'plugins' => $root . 'core/components/' . PKG_NAME_LOWER . '/elements/plugins/',
 
-    'assets' => [
-        'components/mspoplati/'
-    ],
-    'core' => [
-        'components/mspoplati/',
-//        'components/minishop2/lexicon/en/msp.mspoplati.inc.php',
-//        'components/minishop2/lexicon/ru/msp.mspoplati.inc.php',
-//        'components/minishop2/lexicon/be/msp.mspoplati.inc.php'
-    ],
+    'assets' => ['components/mspoplati/'],
+    'core' => ['components/mspoplati/'],
 ];
 
 $signature = implode('-', [PKG_NAME_LOWER, PKG_VERSION, PKG_RELEASE]);
