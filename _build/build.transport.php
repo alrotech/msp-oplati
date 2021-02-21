@@ -185,7 +185,7 @@ foreach ($settings as $setting) {
         'vehicle_class' => EncryptedVehicle::class,
         xPDOTransport::UNIQUE_KEY => 'key',
         xPDOTransport::PRESERVE_KEYS => true,
-        xPDOTransport::UPDATE_OBJECT => true,
+        xPDOTransport::UPDATE_OBJECT => false,
         'class' => modSystemSetting::class,
         'namespace' => PKG_NAME_LOWER
     ]);
@@ -219,15 +219,14 @@ $resolvers[] = ['type' => 'php', 'source' => $sources['resolvers'] . 'resolve.pa
 // remove category as useless element
 
 $package->put($category, [
-//    'vehicle_class' => EncryptedVehicle::class,
+    'vehicle_class' => EncryptedVehicle::class,
     xPDOTransport::UNIQUE_KEY => 'category',
     xPDOTransport::PRESERVE_KEYS => false,
     xPDOTransport::UPDATE_OBJECT => true,
     xPDOTransport::ABORT_INSTALL_ON_VEHICLE_FAIL => true,
     xPDOTransport::RELATED_OBJECTS => false,
     xPDOTransport::NATIVE_KEY => true,
-    xPDOTransport::RESOLVE_FILES => false,
-    'package' => 'modx',
+    xPDOTransport::RESOLVE_FILES => true,
     'resolve' => $resolvers
 ]);
 
