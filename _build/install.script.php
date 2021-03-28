@@ -17,7 +17,7 @@ $modx->setLogTarget();
 
 $modx->runProcessor('workspace/packages/scanlocal');
 
-$composer = json_decode(file_get_contents(__DIR__ . 'composer.json'), true, 512, JSON_THROW_ON_ERROR);
+$composer = json_decode(file_get_contents(__DIR__ . '/composer.json'), true, 512, JSON_THROW_ON_ERROR);
 [, $packageName] = explode('/', $composer['name']);
 
 $signature = implode('-', [$packageName, $composer['version'], $composer['minimum-stability']]);

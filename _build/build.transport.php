@@ -40,17 +40,13 @@ $root = dirname(__DIR__) . '/';
 $sources = [
     'build' => $root . '_build/',
     'data' => $root . '_build/data/',
-    'docs' => $root . 'docs/',
 
     'resolvers' => $root . '_build/resolvers/',
     'validators' => $root . '_build/validators/',
 
     'implants' => $root . '_build/implants/',
-    'helpers' => $root . '_build/helpers/',
-    'plugins' => $root . 'core/components/' . PKG_NAME_LOWER . '/elements/plugins/',
 
-    'assets' => ['components/mspoplati/'],
-    'core' => ['components/mspoplati/'],
+    'snippets' => $root . 'core/elements/snippets/',
 ];
 
 $signature = implode('-', [PKG_NAME_LOWER, PKG_VERSION, PKG_RELEASE]);
@@ -131,6 +127,22 @@ $xpdo->loadClass(modPrincipal::class);
 $xpdo->loadClass(modElement::class);
 $xpdo->loadClass(modScript::class);
 
+// Put files into package
+$package->put(
+    [
+        'source' => __DIR__ . '/../assets/' . PKG_NAME_LOWER,
+        'target' => "return MODX_ASSETS_PATH . 'components/';",
+    ],
+    ['vehicle_class' => xPDOFileVehicle::class]
+);
+$package->put(
+    [
+        'source' => __DIR__ . '/../core/' . PKG_NAME_LOWER,
+        'target' => "return MODX_CORE_PATH . 'components/';",
+    ],
+    ['vehicle_class' => xPDOFileVehicle::class]
+);
+
 $package->put(
     [
         'source' => $sources['implants'] . 'helpers/xml.php',
@@ -138,7 +150,6 @@ $package->put(
     ],
     ['vehicle_class' => xPDOFileVehicle::class]
 );
-
 $package->put(
     [
         'source' => $sources['implants'] . 'encryptedvehicle.class.php',
@@ -184,32 +195,15 @@ foreach ($settings as $setting) {
     ]);
 }
 
-$category = $xpdo->newObject(modCategory::class);
-$category->fromArray(['id' => 1, 'category' => PKG_NAME_LOWER, 'parent' => 0]);
-
-// move it to files transports
-$resolvers = [];
-foreach ($sources['assets'] as $file) {
-    $directory = dirname($file);
-    $resolvers[] = [
-        'type' => 'file',
-        'source' => $root . 'assets/' . $file,
-        'target' => "return MODX_ASSETS_PATH . '$directory/';",
-    ];
-}
-foreach ($sources['core'] as $file) {
-    $directory = dirname($file);
-    $resolvers[] = [
-        'type' => 'file',
-        'source' => $root . 'core/' . $file,
-        'target' => "return MODX_CORE_PATH . '$directory/';"
-    ];
-}
-
-$resolvers[] = ['type' => 'php', 'source' => $sources['resolvers'] . 'resolve.service.php'];
-$resolvers[] = ['type' => 'php', 'source' => $sources['resolvers'] . 'resolve.payment.php'];
-
 // remove category as useless element
+//$snippets = include $sources['data'] . 'snippets.php';
+//if (is_array($plugins)) {
+//    $category->addMany($plugins, 'Plugins');
+//}
+
+
+$category = $xpdo->newObject(modCategory::class);
+$category->fromArray(['id' => 1, 'category' => 'mspOplati', 'parent' => 0]);
 
 $package->put($category, [
     'vehicle_class' => EncryptedVehicle::class,
@@ -220,7 +214,10 @@ $package->put($category, [
     xPDOTransport::RELATED_OBJECTS => false,
     xPDOTransport::NATIVE_KEY => true,
     xPDOTransport::RESOLVE_FILES => true,
-    'resolve' => $resolvers
+    'resolve' => [
+        ['type' => 'php', 'source' => $sources['resolvers'] . 'resolve.service.php'],
+        ['type' => 'php', 'source' => $sources['resolvers'] . 'resolve.payment.php'],
+    ]
 ]);
 
 $package->setAttribute('changelog', file_get_contents($root . 'CHANGELOG.md'));

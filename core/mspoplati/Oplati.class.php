@@ -116,8 +116,6 @@ class Oplati extends ConfigurablePaymentHandler
 
         $answer = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
 
-//        print_r($answer); die();
-
         $detect = new MobileDetect();
         if ($detect->isTablet() || $detect->isMobile()) {
             return 'https://getapp.o-plati.by/map/'. http_build_query([

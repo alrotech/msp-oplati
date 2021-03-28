@@ -10,7 +10,7 @@
 class msPaymentHandler {}
 class ConfigurablePaymentHandler {}
 
-require_once dirname(__DIR__, 2) . '/core/components/mspoplati/Oplati.class.php';
+require_once dirname(__DIR__, 2) . '/core/mspoplati/Oplati.class.php';
 
 $list = [
     Oplati::OPTION_AREA_CREDENTIALS => [
