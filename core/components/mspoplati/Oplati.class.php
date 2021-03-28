@@ -101,8 +101,8 @@ class Oplati extends ConfigurablePaymentHandler
                 'headerInfo' => $this->config[self::OPTION_HEADER_TEXT],
                 'footerInfo' => $this->config[self::OPTION_FOOTER_TEXT],
             ],
-//            'successUrl' => '',
-//            'failureUrl' => ''
+            'successUrl' => $this->modx->getOption('site_url') . '?' . http_build_query(['result' => 'success', 'msorder' => $order->get('id')]),
+            'failureUrl' => $this->modx->getOption('site_url') . '?' . http_build_query(['result' => 'failure', 'msorder' => $order->get('id')]),
         ];
 
         $response = $client->request(Method::METHOD_POST, 'pos/webPayments', [
@@ -116,15 +116,20 @@ class Oplati extends ConfigurablePaymentHandler
 
         $answer = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
 
+//        print_r($answer); die();
+
         $detect = new MobileDetect();
         if ($detect->isTablet() || $detect->isMobile()) {
-//            return 'https://getapp.o-plati.by/map/'. http_build_query(['app_link' => $data['dynamicQR']]);
-            return 'https://getapp.o-plati.by/map/?app_link=' . $answer['dynamicQR'];
+            return 'https://getapp.o-plati.by/map/'. http_build_query([
+                'app_link' => $answer['dynamicQR'],
+                'back_url' => $this->modx->getOption('site_url') . '?' . http_build_query(['result' => 'check', 'msorder' => $order->get('id')])
+            ]);
         }
 
-        echo $answer['dynamicQR'];
-
-        return '';
+        return 'https://getapp.o-plati.by/map/'. http_build_query([
+            'app_link' => $answer['dynamicQR'],
+            'back_url' => $this->modx->getOption('site_url') . '?' . http_build_query(['result' => 'check', 'msorder' => $order->get('id')])
+        ]);
     }
 
     public function adjustCheckoutUrls(): void

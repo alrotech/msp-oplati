@@ -16,9 +16,13 @@ $modx->setLogLevel(xPDO::LOG_LEVEL_INFO);
 $modx->setLogTarget();
 
 $modx->runProcessor('workspace/packages/scanlocal');
-$answer = $modx->runProcessor('workspace/packages/install',
-    ['signature' => 'mspoplati-0.3.0-dev']
-);
+
+$composer = json_decode(file_get_contents(__DIR__ . 'composer.json'), true, 512, JSON_THROW_ON_ERROR);
+[, $packageName] = explode('/', $composer['name']);
+
+$signature = implode('-', [$packageName, $composer['version'], $composer['minimum-stability']]);
+
+$answer = $modx->runProcessor('workspace/packages/install', ['signature' => $signature]);
 
 $response = $answer->getResponse();
 
