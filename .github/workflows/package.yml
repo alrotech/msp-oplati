@@ -2,7 +2,8 @@ name: Automatic Build
 
 on:
   release:
-    types: [created, published, released]
+    types:
+      - published
 
 jobs:
   build:
