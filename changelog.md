@@ -1,6 +1,11 @@
 # [0.5.0](https://github.com/alroniks/mspOplati/compare/v0.4.0...v0.5.0) (2021-04-23)
 
 
+### Bug Fixes
+
+* set to lower case readme and changelog files names to add them to package ([fd34229](https://github.com/alroniks/mspOplati/commit/fd3422999c28e72292673584e51297c804facb56))
+
+
 ### Features
 
 * add ability to pass encryption key to the build command as a param ([1f740d8](https://github.com/alroniks/mspOplati/commit/1f740d81e66027ccf05373b30526cc57e860887d))
