@@ -33,8 +33,10 @@ jobs:
       - name: Install Dependensies
         uses: php-actions/composer@v5
         with:
+          version: 2
+          php_version: 7.4
           dev: no
-          args: -d _build
+          args: -d _build --ignore-platform-reqs
 
       - name: Build Package
         run: php _build/build.transport.php release {{ secrets.modstore_token }}
