@@ -36,7 +36,7 @@ jobs:
           args: -d _build --ignore-platform-reqs
 
       - name: Build Package
-        run: php _build/build.transport.php release {{ secrets.modstore_token }}
+        run: php _build/build.transport.php release ${{ secrets.modstore_token }}
 
       - name: Attach Artifact
         uses: actions/upload-artifact@v2
