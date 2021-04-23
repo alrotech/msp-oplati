@@ -1,4 +1,13 @@
-# 0.4.0 (2021-04-23)
+# [0.5.0](https://github.com/alroniks/mspOplati/compare/v0.4.0...v0.5.0) (2021-04-23)
+
+
+### Features
+
+* add ability to pass encryption key to the build command as a param ([1f740d8](https://github.com/alroniks/mspOplati/commit/1f740d81e66027ccf05373b30526cc57e860887d))
+
+
+
+# [0.4.0](https://github.com/alroniks/mspOplati/compare/87df0249c5b7b37d1d6b87038926b963110b6f01...v0.4.0) (2021-04-23)
 
 
 ### Bug Fixes
