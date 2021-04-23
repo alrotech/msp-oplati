@@ -38,15 +38,12 @@ $xpdo->setLogTarget();
 
 $root = dirname(__DIR__) . '/';
 $sources = [
-    'build' => $root . '_build/',
-    'data' => $root . '_build/data/',
+    'data'          => $root . '_build/data/',
+    'resolvers'     => $root . '_build/resolvers/',
+    'validators'    => $root . '_build/validators/',
+    'implants'      => $root . '_build/implants/',
 
-    'resolvers' => $root . '_build/resolvers/',
-    'validators' => $root . '_build/validators/',
-
-    'implants' => $root . '_build/implants/',
-
-    'snippets' => $root . 'core/elements/snippets/',
+    'elements'      => $root . 'core/elements/',
 ];
 
 $signature = implode('-', [PKG_NAME_LOWER, PKG_VERSION, PKG_RELEASE]);
@@ -195,15 +192,24 @@ foreach ($settings as $setting) {
     ]);
 }
 
+$category = $xpdo->newObject(modCategory::class);
+$category->fromArray(['id' => 1, 'category' => 'mspOplati', 'parent' => 0]);
+
+$snippet = $xpdo->newObject(modSnippet::class, [
+    'source' => 1,
+    'name' => 'oplati',
+    'static' => 0,
+    'static_file' => 'core/components/' . PKG_NAME_LOWER . '/elements/snippets/oplati.php',
+/*    'plugincode' => trim(str_replace(['<?php', '?>'], '', file_get_contents($sources['plugins'] . $k . '.php'))),*/
+]);
+
+$category->addOne($snippet);
+
 // remove category as useless element
 //$snippets = include $sources['data'] . 'snippets.php';
 //if (is_array($plugins)) {
 //    $category->addMany($plugins, 'Plugins');
 //}
-
-
-$category = $xpdo->newObject(modCategory::class);
-$category->fromArray(['id' => 1, 'category' => 'mspOplati', 'parent' => 0]);
 
 $package->put($category, [
     'vehicle_class' => EncryptedVehicle::class,
