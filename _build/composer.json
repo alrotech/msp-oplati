@@ -2,7 +2,7 @@
   "name": "alroniks/mspoplati",
   "description": "Payment provider for MODX miniShop2 e-commerce solutions based on Oplati system.",
   "type": "metapackage",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "license": "proprietary",
   "authors": [
     {
