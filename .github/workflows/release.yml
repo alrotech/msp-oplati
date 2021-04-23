@@ -5,7 +5,8 @@ on:
     branches: [ master ]
 
 jobs:
-  releasing:
+  release:
+    name: Releasing Version
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -29,22 +30,3 @@ jobs:
           tag_name: ${{ steps.changelog.outputs.tag }}
           release_name: ${{ steps.changelog.outputs.tag }}
           body: ${{ steps.changelog.outputs.clean_changelog }}
-
-      - name: Install Builder Dependensies
-        uses: php-actions/composer@v5
-        with:
-          args: -d _build --ignore-platform-reqs
-
-      - name: Install Core Dependensies
-        uses: php-actions/composer@v5
-        with:
-          args: -d core/mspoplati --ignore-platform-reqs
-
-      - name: Build Package
-        run: php _build/build.transport.php release ${{ secrets.modstore_token }}
-
-      - name: Attach Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          path: _packages/*.zip
-
