@@ -1,13 +1,13 @@
-name: Build and Publish Package
+name: Automatic Build
 
 on:
-  push:
-    tags:
-      - '*'
+  release:
+    types:
+      - created
 
 jobs:
   build:
-    name: Publishing Package
+    name: Building Package
     runs-on: ubuntu-latest
 
     steps:
@@ -26,7 +26,7 @@ jobs:
       - name: Build Package
         run: php _build/build.transport.php release ${{ secrets.modstore_token }}
 
-      - name: Upload Assets to Release
+      - name: Upload Assets
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.github_token }}
