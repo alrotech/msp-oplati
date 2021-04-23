@@ -30,10 +30,15 @@ jobs:
           release_name: ${{ steps.changelog.outputs.tag }}
           body: ${{ steps.changelog.outputs.clean_changelog }}
 
-      - name: Install Dependensies
+      - name: Install Builder Dependensies
         uses: php-actions/composer@v5
         with:
           args: -d _build --ignore-platform-reqs
+
+      - name: Install Core Dependensies
+        uses: php-actions/composer@v5
+        with:
+          args: -d core/mspoplati --ignore-platform-reqs
 
       - name: Build Package
         run: php _build/build.transport.php release ${{ secrets.modstore_token }}
