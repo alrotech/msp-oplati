@@ -49,8 +49,9 @@ $sources = [
 $signature = implode('-', [PKG_NAME_LOWER, PKG_VERSION, PKG_RELEASE]);
 
 $release = false;
+$encryption = null;
 if (!empty($argv) && $argc > 1) {
-    $release = $argv[1];
+    [, $release, $encryption] = $argv;
 }
 
 $directory = $release === 'release' ? $root . '_packages/' : __DIR__ . '/../../../core/packages/';
@@ -73,7 +74,7 @@ $xpdo->loadClass('transport.xPDOObjectVehicle', XPDO_CORE_PATH, true, true);
 $xpdo->loadClass('transport.xPDOFileVehicle', XPDO_CORE_PATH, true, true);
 $xpdo->loadClass('transport.xPDOScriptVehicle', XPDO_CORE_PATH, true, true);
 
-$credentials = file_get_contents(__DIR__ . '/../.encryption');
+$credentials = $encryption ?? file_get_contents(__DIR__ . '/../.encryption');
 if ($credentials) {
     [$username, $key] = explode(':', $credentials);
 }
