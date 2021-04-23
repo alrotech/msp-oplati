@@ -227,9 +227,9 @@ $package->put($category, [
     ]
 ]);
 
-$package->setAttribute('changelog', file_get_contents($root . 'CHANGELOG.md'));
+$package->setAttribute('changelog', file_get_contents($root . 'changelog.md'));
 $package->setAttribute('license', file_get_contents($root . 'LICENSE'));
-$package->setAttribute('readme', file_get_contents($root . 'README.md'));
+$package->setAttribute('readme', file_get_contents($root . 'readme.md'));
 $package->setAttribute('requires', [
     'php' => '>=7.4',
     'modx' => '>=2.0',
