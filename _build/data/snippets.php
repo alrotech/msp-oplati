@@ -5,24 +5,33 @@
  * Written by Ivan Klimchuk <ivan@klimchuk.com>, 2021
  */
 
-$plugins = [];
+/** @var xPDO $xpdo */
+
+$list = [
+    'oplati' => [
+        'description' => 'Snippet for requesting payment data and generating the QR-code'
+    ],
+];
+
+$snippets = [];
 foreach ($list as $k => $v) {
-    $plugin = new modPlugin($xpdo);
-    $plugin->fromArray([
+    $code = file_get_contents(dirname(__DIR__, 2) . '/core/mspoplati/elements/snippets/'. $k . '.php');
+    $snippet = $xpdo->newObject(modSnippet::class);
+    $snippet->fromArray([
        'id' => 0,
        'name' => $k,
        'category' => 0,
        'description' => $v['description'],
-       'plugincode' => trim(str_replace(['<?php', '?>'], '', file_get_contents($sources['plugins'] . $k . '.php'))),
+       'snippet' => trim(str_replace(['<?php', '?>'], '', $code)),
        'static' => true,
-       'static_file' => 'core/components/' . PKG_NAME_LOWER . '/elements/plugins/' . $k . '.php',
+       'static_file' => 'core/components/' . PKG_NAME_LOWER . '/elements/snippets/' . $k . '.php',
        'source' => 1,
        'property_preprocess' => 0,
        'editor_type' => 0,
        'cache_type' => 0
    ], '', true, true);
 
-    $plugins[] = $plugin;
+    $snippets[] = $snippet;
 }
 
-return $plugins;
+return $snippets;

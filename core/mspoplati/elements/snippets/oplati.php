@@ -1,13 +1,44 @@
 <?php
+/**
+ * Copyright (c) Ivan Klimchuk - All Rights Reserved
+ * Unauthorized copying, changing, distributing this file, via any medium, is strictly prohibited.
+ * Written by Ivan Klimchuk <ivan@klimchuk.com>, 2021
+ */
 
-// [[oplati@set]]
+/** @var modX $modx */
+/** @var array $scriptProperties */
 
-// @php @js - это как генерировать коды, на php или на js?
+// @php @js - это как генерировать коды, на php или на js? - sets?
 
+// options
+$orderId = $modx->getOption('msorder', $scriptProperties, $_GET['msorder']);
 // orderid
 // частота обновлений?
 // путь к js?
 // оформление?
+// размер блока с кодом
+
+/** @var msOrder $order */
+$order = $modx->getObject(msOrder::class, ['id' => $orderId]);
+
+/** @var msPayment $payment */
+$payment = $order->getOne('Payment');
+$payment->loadHandler();
+
+/** @var Oplati $paymentHandler */
+$paymentHandler = $payment->handler;
+
+$qr =  $paymentHandler->getCode($order);
+
+print_r($qr);
+
+// https://dev.to/bibekkakati/generate-qr-code-in-javascript-2o67
+
+// namespace, get assets url, build path and url?
+//$modx->regClientScript(); // check duplicates?
+// also here css, once, but can be redefined by script opts
+
+//
 
 // tpl рисует обвязку, а дальше все делает скрипт
 
