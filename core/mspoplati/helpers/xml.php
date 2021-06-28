@@ -9,15 +9,23 @@ declare(strict_types = 1);
 
 namespace alroniks\mspoplati\helpers\xml;
 
+use JsonException;
 use XMLWriter;
 
 /**
  * @param string $content XML string
  *
  * @return array
+ * @throws JsonException
  */
-function xmlToArray(string $content): array {
-    return json_decode(json_encode(simplexml_load_string($content)), true);
+function xmlToArray(string $content): array
+{
+    return json_decode(
+        json_encode(simplexml_load_string($content), JSON_THROW_ON_ERROR),
+        true,
+        512,
+        JSON_THROW_ON_ERROR
+    );
 }
 
 /**
@@ -28,7 +36,8 @@ function xmlToArray(string $content): array {
  *
  * @return XmlWriter
  */
-function arrayToXml(array $data, XmlWriter $writer = null, $nestingLevel = 0): XmlWriter {
+function arrayToXml(array $data, XmlWriter $writer = null, int $nestingLevel = 0): XmlWriter
+{
     if (!$writer) {
         $writer = new XMLWriter();
         $writer->openMemory();

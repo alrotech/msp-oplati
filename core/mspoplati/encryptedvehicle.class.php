@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection AutoloadingIssuesInspection */
+
 /**
  * Copyright (c) Ivan Klimchuk - All Rights Reserved
  * Unauthorized copying, changing, distributing this file, via any medium, is strictly prohibited.
@@ -7,7 +8,7 @@
 
 declare(strict_types = 1);
 
-require_once __DIR__ . '/xml.php';
+require_once __DIR__ . '/helpers/xml.php';
 
 use function alroniks\mspoplati\helpers\xml\xmlToArray;
 use function alroniks\mspoplati\helpers\xml\arrayToXml;
@@ -26,8 +27,10 @@ class EncryptedVehicle extends xPDOObjectVehicle
      * @param       $transport xPDOTransport
      * @param       $object
      * @param array $attributes
+     *
+     * @throws \Exception
      */
-    public function put(&$transport, &$object, $attributes = [])
+    public function put(&$transport, &$object, $attributes = []): void
     {
         parent::put($transport, $object, $attributes);
 
@@ -50,8 +53,9 @@ class EncryptedVehicle extends xPDOObjectVehicle
      * @param $options
      *
      * @return bool
+     * @throws \JsonException
      */
-    public function install(&$transport, $options)
+    public function install(&$transport, $options): bool
     {
         if (!$this->decodePayloads($transport)) {
             $transport->xpdo->log(xPDO::LOG_LEVEL_ERROR, 'Package can not be decrypted!');
@@ -68,8 +72,9 @@ class EncryptedVehicle extends xPDOObjectVehicle
      * @param $options
      *
      * @return bool
+     * @throws \JsonException
      */
-    public function uninstall(&$transport, $options)
+    public function uninstall(&$transport, $options): bool
     {
         if (!$this->decodePayloads($transport, 'uninstall')) {
             $transport->xpdo->log(xPDO::LOG_LEVEL_ERROR, 'Package can not be decrypted!');
@@ -86,14 +91,21 @@ class EncryptedVehicle extends xPDOObjectVehicle
      * @param string $key
      *
      * @return string
+     * @throws Exception
      */
-    protected function encode($data, $key)
+    protected function encode(array $data, string $key): string
     {
-        $ivLength = openssl_cipher_iv_length(self::CIPHER);
-        $iv = openssl_random_pseudo_bytes($ivLength);
-        $cipher_raw = openssl_encrypt(serialize($data), self::CIPHER, $key, OPENSSL_RAW_DATA, $iv);
+        $iv = random_bytes(openssl_cipher_iv_length(self::CIPHER));
 
-        return base64_encode($iv . $cipher_raw);
+        $encrypted = openssl_encrypt(
+            serialize($data),
+            self::CIPHER,
+            $key,
+            OPENSSL_RAW_DATA,
+            $iv
+        );
+
+        return base64_encode($iv . $encrypted);
     }
 
     /**
@@ -102,7 +114,7 @@ class EncryptedVehicle extends xPDOObjectVehicle
      *
      * @return string
      */
-    protected function decode($string, $key)
+    protected function decode(string $string, string $key): string
     {
         $ivLen = openssl_cipher_iv_length(self::CIPHER);
         $encoded = base64_decode($string);
@@ -118,8 +130,9 @@ class EncryptedVehicle extends xPDOObjectVehicle
      * @param string $action
      *
      * @return bool
+     * @throws \JsonException
      */
-    protected function decodePayloads(&$transport, $action = 'install')
+    protected function decodePayloads(xPDOTransport $transport, string $action = 'install'): bool
     {
         $keysFound = count(array_intersect(['object_encrypted', 'related_objects_encrypted'], array_keys($this->payload)));
 
@@ -141,12 +154,13 @@ class EncryptedVehicle extends xPDOObjectVehicle
     }
 
     /**
-     * @param $transport xPDOTransport
-     * @param $action
+     * @param        $transport xPDOTransport
+     * @param string $action
      *
      * @return bool|string
+     * @throws \JsonException
      */
-    protected function getDecodeKey(&$transport, $action)
+    protected function getDecodeKey(xPDOTransport $transport, string $action)
     {
         $key = false;
         $endpoint = 'package/decode/' . $action;
@@ -198,7 +212,7 @@ class EncryptedVehicle extends xPDOObjectVehicle
                 $params = [
                     'api_key' => $secret,
                     'username' => $username,
-                    'http_host' => 'anysite.docker',
+                    'http_host' => 'any-site.docker',
                     'package' => $package->package_name,
                     'version' => $transport->version,
                     'vehicle_version' => self::VERSION,

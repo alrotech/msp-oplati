@@ -12,7 +12,7 @@
   ],
   "autoload": {
     "files": [
-      "implants/helpers/xml.php"
+      "../core/mspoplati/helpers/xml.php"
     ]
   },
   "minimum-stability": "dev",

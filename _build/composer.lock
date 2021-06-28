@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2056b636f21145110c03eef3c4be7f0b",
+    "content-hash": "d5c7e64286cd03ccbceefb27c6fa7a64",
     "packages": [],
     "packages-dev": [
         {
             "name": "modx/revolution",
-            "version": "v2.8.1-pl",
+            "version": "v2.8.3-pl",
             "source": {
                 "type": "git",
                 "url": "https://github.com/modxcms/revolution.git",
-                "reference": "18f052dd79ae25a5303cc7a6e4cf23b31313ee68"
+                "reference": "9f34bc936bcfa604d462a3f8b8fa3a36586b4395"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/modxcms/revolution/zipball/18f052dd79ae25a5303cc7a6e4cf23b31313ee68",
-                "reference": "18f052dd79ae25a5303cc7a6e4cf23b31313ee68",
+                "url": "https://api.github.com/repos/modxcms/revolution/zipball/9f34bc936bcfa604d462a3f8b8fa3a36586b4395",
+                "reference": "9f34bc936bcfa604d462a3f8b8fa3a36586b4395",
                 "shasum": ""
             },
             "require": {
@@ -70,7 +70,7 @@
                 "issues": "https://github.com/modxcms/revolution/issues/",
                 "source": "https://github.com/modxcms/revolution/"
             },
-            "time": "2020-10-22T15:51:51+00:00"
+            "time": "2021-05-28T14:54:39+00:00"
         }
     ],
     "aliases": [],
@@ -89,5 +89,5 @@
         "ext-openssl": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }

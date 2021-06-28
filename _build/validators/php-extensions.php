@@ -27,7 +27,7 @@ $extensions = [
 foreach ($extensions as $ext => $title) {
     if (!extension_loaded($ext)) {
         $msg = sprintf('
-            PHP extension `%s` (http://php.net/manual/en/book.%s.php) does not loaded. 
+            PHP extension `%s` (https://php.net/manual/en/book.%s.php) does not loaded. 
             This PHP extension is required for a proper work of this package.
             Please, ask your sysadmin or hosting company to install and configure it before continue.',
             $title, $ext === 'bcmath' ? 'bc' : $ext
