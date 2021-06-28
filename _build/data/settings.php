@@ -10,12 +10,10 @@
 class msPaymentHandler {}
 class ConfigurablePaymentHandler {}
 
-require_once dirname(__DIR__, 2) . '/core/mspoplati/Oplati.class.php';
+require_once __DIR__ . '/../../core/mspoplati/Oplati.class.php';
 
 $list = [
     Oplati::OPTION_AREA_CREDENTIALS => [
-//        Oplati::OPTION_CASH_REGISTER_NUMBER => ['xtype' => 'textfield', 'value' => 'OPL000000985'],
-//        Oplati::OPTION_CASH_PASSWORD => ['xtype' => 'text-password', 'value' => 'Modx12345'],
         Oplati::OPTION_CASH_REGISTER_NUMBER => ['xtype' => 'textfield', 'value' => ''],
         Oplati::OPTION_CASH_PASSWORD => ['xtype' => 'text-password', 'value' => ''],
     ],
