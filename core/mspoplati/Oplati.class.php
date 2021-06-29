@@ -7,7 +7,6 @@
 
 declare(strict_types = 1);
 
-use Detection\MobileDetect;
 use GuzzleHttp\Client;
 use Fig\Http\Message\RequestMethodInterface as Method;
 use Lmc\HttpConstants\Header;
@@ -17,6 +16,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 if (!class_exists('ConfigurablePaymentHandler')) {
     $path = MODX_CORE_PATH. 'components/mspaymentprops/ConfigurablePaymentHandler.class.php';
     if (is_readable($path)) {
+        /** @noinspection PhpIncludeInspection */
         require_once $path;
     }
 }
@@ -68,7 +68,38 @@ class Oplati extends ConfigurablePaymentHandler
         return $this->success('', ['redirect' => $link]);
     }
 
-    public function getPaymentLink(msOrder $order)
+    /**
+     * @throws \ReflectionException
+     */
+    public function getPaymentLink(msOrder $order): string
+    {
+        /** @var msPayment $payment */
+        $payment = $order->getOne('Payment');
+
+        $this->config = $this->getProperties($payment);
+
+        return $this->modx->makeUrl(
+            $this->config[self::OPTION_UNPAID_PAGE],
+            $this->modx->context->get('key'),
+            modX::toQueryString(['msorder' => $order->get('id')]),
+            'full'
+        );
+    }
+
+    // todo: move to the payment props
+    protected function adjustCheckoutUrls(): void
+    {
+        if ($this->config[self::OPTION_DEVELOPER_MODE]) {
+            $this->config[self::OPTION_GATEWAY_URL] = $this->config[self::OPTION_GATEWAY_URL_TEST];
+        }
+    }
+
+    /**
+     * @throws \ReflectionException
+     * @throws \JsonException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getQuickResponseCode(msOrder $order): string
     {
         /** @var msPayment $payment */
         $payment = $order->getOne('Payment');
@@ -89,6 +120,7 @@ class Oplati extends ConfigurablePaymentHandler
         }, $this->modx->getCollection(msOrderProduct::class, ['order_id' => $order->get('id')])));
 
         // todo: replace by dto or vo
+
         $request = [
             'sum' => $order->get('cost'),
             'orderNumber' => $order->get('id'),
@@ -116,24 +148,6 @@ class Oplati extends ConfigurablePaymentHandler
 
         $answer = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
 
-        $detect = new MobileDetect();
-        if ($detect->isTablet() || $detect->isMobile()) {
-            return 'https://getapp.o-plati.by/map/'. http_build_query([
-                'app_link' => $answer['dynamicQR'],
-                'back_url' => $this->modx->getOption('site_url') . '?' . http_build_query(['result' => 'check', 'msorder' => $order->get('id')])
-            ]);
-        }
-
-        return 'https://getapp.o-plati.by/map/'. http_build_query([
-            'app_link' => $answer['dynamicQR'],
-            'back_url' => $this->modx->getOption('site_url') . '?' . http_build_query(['result' => 'check', 'msorder' => $order->get('id')])
-        ]);
-    }
-
-    public function adjustCheckoutUrls(): void
-    {
-        if ($this->config[self::OPTION_DEVELOPER_MODE]) {
-            $this->config[self::OPTION_GATEWAY_URL] = $this->config[self::OPTION_GATEWAY_URL_TEST];
-        }
+        return $answer['dynamicQR'];
     }
 }
