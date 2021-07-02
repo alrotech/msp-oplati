@@ -1,3 +1,18 @@
+# [0.6.0](https://github.com/alroniks/mspOplati/compare/v0.5.0...v0.6.0) (2021-07-02)
+
+
+### Bug Fixes
+
+* proper file path in require ([bbc2f42](https://github.com/alroniks/mspOplati/commit/bbc2f420e79fbe193d806e3ca31dd189de8f2181))
+
+
+### Features
+
+* add snippet and chunk for rendering qr code ([cb80cc9](https://github.com/alroniks/mspOplati/commit/cb80cc9db687ad91b6ef49f59abe06ed633aa311))
+* return to unpaid page and showing the qr code there ([6a30980](https://github.com/alroniks/mspOplati/commit/6a309802611625ca07eb9927e9e676fde851bb85))
+
+
+
 # [0.5.0](https://github.com/alroniks/mspOplati/compare/v0.4.0...v0.5.0) (2021-04-23)
 
 
