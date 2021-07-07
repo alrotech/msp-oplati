@@ -1,3 +1,14 @@
+# [0.7.0](https://github.com/alroniks/mspOplati/compare/v0.6.0...v0.7.0) (2021-07-07)
+
+
+### Features
+
+* add draft of documentation ([f3698a3](https://github.com/alroniks/mspOplati/commit/f3698a33193faf1a83c81da7f1313c8b143b1262))
+* add qr code library and create front application ([53a9221](https://github.com/alroniks/mspOplati/commit/53a9221a90636d15d07ab40bcb55ed2534f9ba14))
+* add snippet and tpl for qr code ([2dec4d1](https://github.com/alroniks/mspOplati/commit/2dec4d1a6ccfe01c93e26b4a5580ee921354399f))
+
+
+
 # [0.6.0](https://github.com/alroniks/mspOplati/compare/v0.5.0...v0.6.0) (2021-07-02)
 
 
