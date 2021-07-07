@@ -1,12 +1,22 @@
+<div class="oplati-wrapper"
+     data-size="200"
+     data-fill="ffffff"
+     data-path="000000"
+     data-code="[[+code]]"
+>
+    {*    todo: to lexicons*}
+    <span class="oplati-info-message">Оплата заказа №num</span>
 
-<div id="qrcode"></div>
+    <div class="oplati-code-block"></div>
 
-<script>
-    var QR_CODE = new QRCode("qrcode", {
-        width: 220,
-        height: 220,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.H,
-    });
-</script>
+    {*    todo: to lexicons*}
+    <span class="oplati-help-message">Отсканируйте QR-код приложением Oplati.</span>
+
+    <div class="oplati-mobile-block">
+        {*    todo: to lexicons*}
+        <button class="oplati-mobile-button">Оплатить через "Оплати"</button>
+    </div>
+
+    <div class="oplati-timer-block"></div>
+    <div class="oplati-status-block"></div>
+</div>
