@@ -8,15 +8,20 @@
 /** @var modX $modx */
 /** @var array $scriptProperties */
 
-// @php @js - это как генерировать коды, на php или на js? - sets?
-
-// options
+# Options
 $orderId = $modx->getOption('msorder', $scriptProperties, $_GET['msorder']);
-// orderid
+$tpl = $modx->getOption('tpl', $scriptProperties, 'qrcode');
+
+$size = $modx->getOption('size', $scriptProperties, '200');
+$fill = $modx->getOption('fillColor', $scriptProperties, 'ffffff');
+$path = $modx->getOption('pathColor', $scriptProperties, '000000');
+
 // частота обновлений?
-// путь к js?
-// оформление?
-// размер блока с кодом
+
+// путь к js? - системные настройки онли?
+// путь к css? - системные настройки онли?
+
+# Order handling
 
 /** @var msOrder $order */
 $order = $modx->getObject(msOrder::class, ['id' => $orderId]);
@@ -28,35 +33,28 @@ $payment->loadHandler();
 /** @var Oplati $paymentHandler */
 $paymentHandler = $payment->handler;
 
-$qr =  $paymentHandler->getCode($order);
+$qrCode =  $paymentHandler->getQuickResponseCode($order);
 
-print_r($qr);
+# View the code
 
-// https://dev.to/bibekkakati/generate-qr-code-in-javascript-2o67
+$assetsUrl = $modx->getOption('assets_url');
 
-// namespace, get assets url, build path and url?
-//$modx->regClientScript(); // check duplicates?
-// also here css, once, but can be redefined by script opts
+$modx->regClientScript($assetsUrl . 'components/mspoplati/js/qrcode.min.js');
+$modx->regClientScript($assetsUrl . 'components/mspoplati/js/oplati.app.js');
+$modx->regClientCSS($assetsUrl . 'components/mspoplati/css/oplati.app.css');
 
-//
-
-// tpl рисует обвязку, а дальше все делает скрипт
+return $modx->getChunk($tpl, [
+    'code' => $qrCode,
+    'fill' => $fill,
+    'path' => $path,
+]);
 
 // сниппет вывел блок - показываем код и ставим таймер
 // - по таймеру ходим на сервер, валидируем оплату,
 // если нет - выдаем статусы под кодом
 // если да - прячем код, говорим что все хорошо, вернуться на сайт?
 
-// QR-код, размеры задаются через сниппет для js, либа на клиенте любая
-// загрузка css, загрузка js - свой шаблон
-// можно переопределить как стили, так и js
-//
 
-// модуль по умолчанию шлет запрос на страницу unpaid, которая может быть и корзиной в том числе
-// это нужно, чтобы обеспечить работу getPaymentLink, которая позволит выдавать страницу оплаты человеку в любой момент со стороны администратора
-// при этом всегда можно вызвать снипет в любом месте, куда передать необходимые параметры, типа номера заказа (ему только номер заказа и нужен по сути)
-// номер заказа при этом можно брать из параметра msorder по умолчанию
-// далее снипет делает первый запрос к серверу и формирует ссылку для оплаты и данные для кр-кода и передает в скрипт в виде данных через дата атрибуты (?)
 // скрипт в свою очередь показывает кнопку и рисует сам код по данным, скрипт можно подключать любой по инструкции
 // далее тот же скрипт делает запрос на сервер с целью проверки платежа и меняет статус если нужно
 // если время ожидания вышло, то нужно повторить запрос на перегенерацию кода
@@ -64,9 +62,7 @@ print_r($qr);
 // так же можно предусмотреть опционально добавление срипта проверки в cron
 //
 // в админке следует предусмотреть кнопку для проверки статуса платежа заказа, если он был через оплати
-// следовательно, нужно иметь возможность проверить все такие заказы за один проход
+// следовательно, нужно иметь возможность проверить все такие заказы за один проход - крон?
 //
 // так же следует реализовать механизм сверки по кассе в конце дня - в след версиях
-//
-// так же нужно иметь возможность вернуть деньги в течение текущего бизнес-дня - в следуюбщих версиям
-
+// так же нужно иметь возможность вернуть деньги в течение текущего бизнес-дня - в следующих версиям
