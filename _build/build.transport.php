@@ -41,13 +41,11 @@ $xpdo->setLogTarget();
 
 $signature = implode('-', [PKG_NAME_LOWER, PKG_VERSION, PKG_RELEASE]);
 
-$release = false;
-$encryption = null;
 if (!empty($argv) && $argc > 1) {
-    [, $release, $encryption] = $argv;
+    [, $release, $encryption] = array_replace(array_fill(0, 3,null), $argv);
 }
 
-$directory = $release === 'release' ? dirname(__DIR__) . '/_packages/' : __DIR__ . '/../../../core/packages/';
+$directory = (isset($release) && $release === 'release') ? dirname(__DIR__) . '/_packages/' : __DIR__ . '/../../../core/packages/';
 $filename = $directory . $signature . '.transport.zip';
 
 /* remove the package if it's already been made */
