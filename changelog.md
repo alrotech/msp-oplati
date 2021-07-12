@@ -1,3 +1,20 @@
+# [0.8.0](https://github.com/alroniks/mspOplati/compare/v0.7.0...v0.8.0) (2021-07-12)
+
+
+### Bug Fixes
+
+* finished snippet for generating qr code in the template (snippet) ([93f467d](https://github.com/alroniks/mspOplati/commit/93f467d86ec52ad2b95a2c58c17bf6626485fe86))
+* use in the chunk real properties about size and colors ([6282b62](https://github.com/alroniks/mspOplati/commit/6282b624c9a43f94d8ea1aa18176c39162a90fa1))
+
+
+### Features
+
+* connector for requests to the processors ([9c376dc](https://github.com/alroniks/mspOplati/commit/9c376dcff778edabb90d340fdaf543895d22ec8e))
+* localization, lexicons added ([6ea3ce6](https://github.com/alroniks/mspOplati/commit/6ea3ce65e6fee72c55617dd3eda726a266c4d4d3))
+* processors for getting payment status and renewing qr code ([c825031](https://github.com/alroniks/mspOplati/commit/c825031b7954de75bb1675bfda154a83a7b588e2))
+
+
+
 # [0.7.0](https://github.com/alroniks/mspOplati/compare/v0.6.0...v0.7.0) (2021-07-07)
 
 
