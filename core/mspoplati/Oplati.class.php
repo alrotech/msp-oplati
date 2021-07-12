@@ -86,41 +86,23 @@ class Oplati extends ConfigurablePaymentHandler
         );
     }
 
-    // todo: move to the payment props
-    protected function adjustCheckoutUrls(): void
-    {
-        if ($this->config[self::OPTION_DEVELOPER_MODE]) {
-            $this->config[self::OPTION_GATEWAY_URL] = $this->config[self::OPTION_GATEWAY_URL_TEST];
-        }
-    }
-
     /**
-     * @throws \ReflectionException
      * @throws \JsonException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function getQuickResponseCode(msOrder $order): string
     {
-        /** @var msPayment $payment */
-        $payment = $order->getOne('Payment');
+        $this->setUpConfig($order);
 
-        $this->config = $this->getProperties($payment);
-        $this->adjustCheckoutUrls();
+        $items = array_values(array_map(static fn(msOrderProduct $product) => [
+            'type' => 1,
+            'name' => $product->get('name'),
+            'price' => $product->get('price'),
+            'quantity' => $product->get('count'),
+            'cost' => $product->get('cost'),
+        ], $this->modx->getCollection(msOrderProduct::class, ['order_id' => $order->get('id')])));
 
-        $client = new Client(['base_uri' => $this->config[self::OPTION_GATEWAY_URL]]);
-
-        $items = array_values(array_map(static function (msOrderProduct $product) {
-            return [
-                'type' => 1,
-                'name' => $product->get('name'),
-                'price' => $product->get('price'),
-                'quantity' => $product->get('count'),
-                'cost' => $product->get('cost'),
-            ];
-        }, $this->modx->getCollection(msOrderProduct::class, ['order_id' => $order->get('id')])));
-
-        // todo: replace by dto or vo
-
+        // todo: replace by dto or vo?
         $request = [
             'sum' => $order->get('cost'),
             'orderNumber' => $order->get('id'),
@@ -137,7 +119,7 @@ class Oplati extends ConfigurablePaymentHandler
             'failureUrl' => $this->modx->getOption('site_url') . '?' . http_build_query(['result' => 'failure', 'msorder' => $order->get('id')]),
         ];
 
-        $response = $client->request(Method::METHOD_POST, 'pos/webPayments', [
+        $response = $this->getClient()->request(Method::METHOD_POST, 'pos/webPayments', [
             'headers' => [
                 'regNum' => $this->config[self::OPTION_CASH_REGISTER_NUMBER],
                 'password' => $this->config[self::OPTION_CASH_PASSWORD],
@@ -148,6 +130,43 @@ class Oplati extends ConfigurablePaymentHandler
 
         $answer = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
 
+//        print_r($answer);
+
+        // need to return paymentID as well
+
         return $answer['dynamicQR'];
+    }
+
+    public function checkPaymentStatus(msOrder $order)
+    {
+        $this->setUpConfig($order);
+
+        // 16703
+//        $response = $this->getClient()->request(Method::METHOD_GET, 'pos/payments/{}', [
+//
+//        ]);
+
+    }
+
+    // todo: move to the payment props
+    protected function adjustCheckoutUrls(): void
+    {
+        if ($this->config[self::OPTION_DEVELOPER_MODE]) {
+            $this->config[self::OPTION_GATEWAY_URL] = $this->config[self::OPTION_GATEWAY_URL_TEST];
+        }
+    }
+
+    protected function setUpConfig(msOrder $order): void
+    {
+        /** @var msPayment $payment */
+        $payment = $order->getOne('Payment');
+
+        $this->config = $this->getProperties($payment);
+        $this->adjustCheckoutUrls();
+    }
+
+    protected function getClient(): Client
+    {
+        return new Client(['base_uri' => $this->config[self::OPTION_GATEWAY_URL]]);
     }
 }

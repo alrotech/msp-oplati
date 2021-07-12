@@ -32,7 +32,7 @@ $payment->loadHandler();
 /** @var Oplati $paymentHandler */
 $paymentHandler = $payment->handler;
 
-$code =  $paymentHandler->getQuickResponseCode($order);
+$code = $paymentHandler->getQuickResponseCode($order);
 
 # View the code
 
