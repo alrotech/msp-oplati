@@ -2,7 +2,8 @@
      data-size="[[+size]]" data-fill="[[+fill]]" data-path="[[+path]]" data-code="[[+code]]"
 data-pid="[[+pid]]">
 
-    <span class="oplati-info-message">[[%oplati-info-message]]</span>
+    <span class="oplati-info-message">[[%oplati-info-message]] //
+        [[%oplati_info_message? &namespace=`namespace_name`]]</span>
 {*    Оплата заказа №num*}
 
     <div class="oplati-code-block"></div>

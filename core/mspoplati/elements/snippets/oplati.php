@@ -8,6 +8,10 @@
 /** @var modX $modx */
 /** @var array $scriptProperties */
 
+// todo: move it to the service and get service in the snippet
+$modx->getService('lexicon', modLexicon::class);
+$modx->lexicon->load('mspoplati:default');
+
 # Options
 
 $orderId = $modx->getOption('msorder', $scriptProperties, $_GET['msorder']);
