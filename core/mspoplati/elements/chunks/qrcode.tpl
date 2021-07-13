@@ -1,22 +1,11 @@
-<div class="oplati-wrapper"
-     data-size="[[+size]]" data-fill="[[+fill]]" data-path="[[+path]]" data-code="[[+code]]"
-data-pid="[[+pid]]">
+<div class="oplati-wrapper" data-size="[[+size]]" data-fill="[[+fill]]" data-path="[[+path]]" data-code="[[+code]]" data-oid="[[+oid]]">
 
-    <span class="oplati-info-message">[[%oplati-info-message]] //
-        [[%oplati_info_message? &namespace=`namespace_name`]]</span>
-{*    Оплата заказа №num*}
-
+    <span class="oplati-info-message">[[%oplati-info-message]]</span>
     <div class="oplati-code-block"></div>
-
-    {*    todo: to lexicons*}
     <span class="oplati-help-message">[[%oplati-help-message]]</span>
-{*    Отсканируйте QR-код приложением Oplati.*}
-
-    <button class="button">Проверить платеж</button>
 
     <div class="oplati-mobile-block">
-        <button class="oplati-mobile-button">[[%oplati-mobile-button]]</button>
-{*        Оплатить через "Оплати"*}
+        <button class="oplati-mobile-button">[[%oplati-mobile-button-text]]</button>
     </div>
 
     <div class="oplati-timer-block"></div>
