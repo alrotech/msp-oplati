@@ -13,7 +13,7 @@ use Fig\Http\Message\RequestMethodInterface as Method;
 use League\Uri\UriTemplate;
 use Lmc\HttpConstants\Header;
 
-require_once __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 if (!class_exists('ConfigurablePaymentHandler')) {
     $path = MODX_CORE_PATH. 'components/mspaymentprops/ConfigurablePaymentHandler.class.php';

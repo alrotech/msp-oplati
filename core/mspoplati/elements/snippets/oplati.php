@@ -12,6 +12,13 @@
 $modx->getService('lexicon', modLexicon::class);
 $modx->lexicon->load('mspoplati:default');
 
+$componentPath = $modx->getOption(
+    'mspoplati.core_path', null,
+    $modx->getOption('core_path') . 'components/mspoplati/'
+);
+
+require $componentPath . 'vendor/autoload.php';
+
 # Options
 
 $orderId = $modx->getOption('msorder', $scriptProperties, $_GET['msorder']);
@@ -40,7 +47,7 @@ $paymentHandler = $payment->handler;
 
 $payment = $paymentHandler->getQuickResponseCode($order);
 
-$order->set('properties', array_merge($order->get('properties'), $payment->toArray()));
+$order->set('properties', array_merge($order->get('properties') ?? [], $payment->toArray()));
 $order->save();
 
 # View the code

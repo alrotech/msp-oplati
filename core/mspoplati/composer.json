@@ -7,7 +7,6 @@
         "fig/http-message-util": "^1.1",
         "lmc/http-constants": "^1.2",
         "spatie/data-transfer-object": "^2.8",
-        "mobiledetect/mobiledetectlib": "^2.8",
         "league/uri": "^6.0"
     },
     "require-dev": {
@@ -20,5 +19,10 @@
             "email": "ivan@klimchuk.com"
         }
     ],
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "alroniks\\mspoplati\\dto\\": "dto/"
+        }
+    }
 }
