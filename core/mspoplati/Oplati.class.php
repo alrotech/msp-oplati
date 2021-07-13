@@ -7,8 +7,10 @@
 
 declare(strict_types = 1);
 
+use alroniks\mspoplati\dto\Payment;
 use GuzzleHttp\Client;
 use Fig\Http\Message\RequestMethodInterface as Method;
+use League\Uri\UriTemplate;
 use Lmc\HttpConstants\Header;
 
 require_once __DIR__ . '/vendor/autoload.php';
@@ -89,8 +91,9 @@ class Oplati extends ConfigurablePaymentHandler
     /**
      * @throws \JsonException
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * todo: rename the method
      */
-    public function getQuickResponseCode(msOrder $order): string
+    public function getQuickResponseCode(msOrder $order): Payment
     {
         $this->setUpConfig($order);
 
@@ -128,27 +131,23 @@ class Oplati extends ConfigurablePaymentHandler
             'json' => $request
         ]);
 
-        $answer = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-
-//        print_r($answer);
-
-        // need to return paymentID as well
-
-        return $answer['dynamicQR'];
+        return new Payment(
+            json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR)
+        );
     }
 
     public function checkPaymentStatus(msOrder $order)
     {
         $this->setUpConfig($order);
 
-        // 16703
-//        $response = $this->getClient()->request(Method::METHOD_GET, 'pos/payments/{}', [
-//
-//        ]);
+        // fetch paymentId from the order
 
+        $response = $this->getClient()->request(
+            Method::METHOD_GET,
+            (new UriTemplate('pos/payments/{pid}'))->expand(['pid' => 16703])
+        );
     }
 
-    // todo: move to the payment props
     protected function adjustCheckoutUrls(): void
     {
         if ($this->config[self::OPTION_DEVELOPER_MODE]) {
@@ -170,3 +169,18 @@ class Oplati extends ConfigurablePaymentHandler
         return new Client(['base_uri' => $this->config[self::OPTION_GATEWAY_URL]]);
     }
 }
+
+// + сделать DTO для ответов сервиса
+
+// - конвертнуть класс в сервис, упростить вызоыв сервиса в снипете
+// - добавить в пакет property set для снипета
+// - перенести вызов лексикона в сервис
+
+// - зарегить сервис через системную настройку программно во время установки
+// - добавить setup options при установке пакета
+// - вынести пути к файлам скриптов в системные настройки
+// - грузить библиотеку для qr-кода программно на js, чтобы инклюдить только 1 файл в настройке
+// - описать системные настройки и сделать переводы
+// - привести в порядок вшешний вид блока
+// - реализовать в js приложении таймер для обратного отсчета
+// - реализовать показ статуса платежа динамически

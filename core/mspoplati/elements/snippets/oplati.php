@@ -29,14 +29,19 @@ $path = $modx->getOption('pathColor', $scriptProperties, '000000');
 /** @var msOrder $order */
 $order = $modx->getObject(msOrder::class, ['id' => $orderId]);
 
+// replace by service call
 /** @var msPayment $payment */
 $payment = $order->getOne('Payment');
 $payment->loadHandler();
 
 /** @var Oplati $paymentHandler */
 $paymentHandler = $payment->handler;
+// end replacement
 
-$code = $paymentHandler->getQuickResponseCode($order);
+$payment = $paymentHandler->getQuickResponseCode($order);
+
+$order->set('properties', array_merge($order->get('properties'), $payment->toArray()));
+$order->save();
 
 # View the code
 
@@ -47,8 +52,9 @@ $modx->regClientScript($assetsUrl . 'components/mspoplati/app/oplati.app.js');
 $modx->regClientCSS($assetsUrl . 'components/mspoplati/styles/oplati.app.css');
 
 return $modx->getChunk($tpl, [
-    'code' => $code,
+    'code' => $payment->dynamicQR,
     'fill' => $fill,
     'path' => $path,
-    'size' => $size
+    'size' => $size,
+    'oid' => $order->get('id')
 ]);
