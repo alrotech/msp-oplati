@@ -5,6 +5,8 @@
  * Written by Ivan Klimchuk <ivan@klimchuk.com>, 2021
  */
 
+declare(strict_types = 1);
+
 /** @var xPDOTransport $transport */
 /** @var array $options */
 
@@ -16,18 +18,22 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
     case xPDOTransport::ACTION_INSTALL:
     case xPDOTransport::ACTION_UPGRADE:
 
+        $transport->xpdo->addExtensionPackage('oplati', '[[++core_path]]components/mspoplati/services/');
+
         /** @var miniShop2 $shop */
         if ($shop = $transport->xpdo->getService('miniShop2')) {
-            $shop->addService('payment', Oplati::class, '{core_path}components/mspoplati/Oplati.class.php');
+            $shop->addService('payment', OplatiHandler::class, '{core_path}components/mspoplati/OplatiHandler.class.php');
         }
 
         break;
 
     case xPDOTransport::ACTION_UNINSTALL:
 
+        $transport->xpdo->removeExtensionPackage('oplati');
+
         /** @var miniShop2 $shop */
         if ($shop = $transport->xpdo->getService('miniShop2')) {
-            $shop->removeService('payment', Oplati::class);
+            $shop->removeService('payment', OplatiHandler::class);
         }
 
         break;

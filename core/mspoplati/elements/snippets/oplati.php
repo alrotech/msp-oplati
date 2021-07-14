@@ -8,10 +8,6 @@
 /** @var modX $modx */
 /** @var array $scriptProperties */
 
-// todo: move it to the service and get service in the snippet
-$modx->getService('lexicon', modLexicon::class);
-$modx->lexicon->load('mspoplati:default');
-
 $componentPath = $modx->getOption(
     'mspoplati.core_path', null,
     $modx->getOption('core_path') . 'components/mspoplati/'
@@ -36,16 +32,7 @@ $path = $modx->getOption('pathColor', $scriptProperties, '000000');
 /** @var msOrder $order */
 $order = $modx->getObject(msOrder::class, ['id' => $orderId]);
 
-// replace by service call
-/** @var msPayment $payment */
-$payment = $order->getOne('Payment');
-$payment->loadHandler();
-
-/** @var Oplati $paymentHandler */
-$paymentHandler = $payment->handler;
-// end replacement
-
-$payment = $paymentHandler->getQuickResponseCode($order);
+$payment = $modx->getService('oplati', OplatiService::class)->requestPayment($order);
 
 $order->set('properties', array_merge($order->get('properties') ?? [], $payment->toArray()));
 $order->save();
