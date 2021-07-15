@@ -10,13 +10,14 @@ declare(strict_types = 1);
 require __DIR__ . '/../../vendor/autoload.php';
 
 use alroniks\mspoplati\dto\Payment;
+use alroniks\mspoplati\OplatiBridgeInterface;
 use alroniks\mspoplati\OplatiGatewayInterface;
 use GuzzleHttp\Client;
 use Fig\Http\Message\RequestMethodInterface as Method;
 use League\Uri\UriTemplate;
 use Lmc\HttpConstants\Header;
 
-class OplatiService implements OplatiGatewayInterface
+class OplatiService implements OplatiBridgeInterface
 {
     private modX $modx;
 
@@ -52,12 +53,12 @@ class OplatiService implements OplatiGatewayInterface
             'orderNumber' => $order->get('id'),
             'details' => [
                 'receiptNumber' => $order->get('num'),
-                'regNum' => $this->config[self::OPTION_PRINT_CASH_REGISTER_NUMBER] ? $this->config[self::OPTION_CASH_REGISTER_NUMBER] : '',
+                'regNum' => $this->config[OplatiGatewayInterface::OPTION_PRINT_CASH_REGISTER_NUMBER] ? $this->config[self::OPTION_CASH_REGISTER_NUMBER] : '',
                 'items' => $items,
                 'amountTotal' => $order->get('cost'),
-                'title' => $this->config[self::OPTION_TITLE_TEXT],
-                'headerInfo' => $this->config[self::OPTION_HEADER_TEXT],
-                'footerInfo' => $this->config[self::OPTION_FOOTER_TEXT],
+                'title' => $this->config[OplatiGatewayInterface::OPTION_TITLE_TEXT],
+                'headerInfo' => $this->config[OplatiGatewayInterface::OPTION_HEADER_TEXT],
+                'footerInfo' => $this->config[OplatiGatewayInterface::OPTION_FOOTER_TEXT],
             ],
             'successUrl' => $this->modx->getOption('site_url') . '?' . http_build_query(['result' => 'success', 'msorder' => $order->get('id')]),
             'failureUrl' => $this->modx->getOption('site_url') . '?' . http_build_query(['result' => 'failure', 'msorder' => $order->get('id')]),
@@ -65,8 +66,8 @@ class OplatiService implements OplatiGatewayInterface
 
         $response = $this->getClient()->request(Method::METHOD_POST, 'pos/webPayments', [
             'headers' => [
-                'regNum' => $this->config[self::OPTION_CASH_REGISTER_NUMBER],
-                'password' => $this->config[self::OPTION_CASH_PASSWORD],
+                'regNum' => $this->config[OplatiGatewayInterface::OPTION_CASH_REGISTER_NUMBER],
+                'password' => $this->config[OplatiGatewayInterface::OPTION_CASH_PASSWORD],
                 Header::CONTENT_TYPE => 'application/json',
             ],
             'json' => $request
@@ -97,13 +98,13 @@ class OplatiService implements OplatiGatewayInterface
 
         $this->config = $payment->handler->getProperties($payment);
 
-        if ($this->config[self::OPTION_DEVELOPER_MODE]) {
-            $this->config[self::OPTION_GATEWAY_URL] = $this->config[self::OPTION_GATEWAY_URL_TEST];
+        if ($this->config[OplatiGatewayInterface::OPTION_DEVELOPER_MODE]) {
+            $this->config[OplatiGatewayInterface::OPTION_GATEWAY_URL] = $this->config[OplatiGatewayInterface::OPTION_GATEWAY_URL_TEST];
         }
     }
 
     protected function getClient(): Client
     {
-        return new Client(['base_uri' => $this->config[self::OPTION_GATEWAY_URL]]);
+        return new Client(['base_uri' => $this->config[OplatiGatewayInterface::OPTION_GATEWAY_URL]]);
     }
 }

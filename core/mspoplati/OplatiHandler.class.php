@@ -7,6 +7,10 @@
 
 declare(strict_types = 1);
 
+require __DIR__ . '/vendor/autoload.php';
+
+use alroniks\mspoplati\OplatiGatewayInterface;
+
 if (!class_exists('ConfigurablePaymentHandler')) {
     $path = MODX_CORE_PATH. 'components/mspaymentprops/ConfigurablePaymentHandler.class.php';
     if (is_readable($path)) {
@@ -15,11 +19,11 @@ if (!class_exists('ConfigurablePaymentHandler')) {
     }
 }
 
-class OplatiHandler extends ConfigurablePaymentHandler
+class OplatiHandler extends ConfigurablePaymentHandler implements OplatiGatewayInterface
 {
     public static function getPrefix(): string
     {
-        return strtolower(__CLASS__);
+        return 'oplati';
     }
 
     /**
@@ -53,7 +57,8 @@ class OplatiHandler extends ConfigurablePaymentHandler
     }
 }
 
-// - добавить в пакет property set для снипета
+// + добавить в пакет property set для снипета
+
 // - добавить setup options при установке пакета
 // - вынести пути к файлам скриптов в системные настройки
 
