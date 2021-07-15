@@ -24,7 +24,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
                 'logo' => MODX_ASSETS_URL . 'components/mspoplati/oplati-logo-black.svg',
                 'rank' => 0,
                 'active' => 1,
-                'class' => 'Oplati',
+                'class' => OplatiHandler::class,
                 'properties' => null // todo: setup minimal default properties
             ]
         )->save();
@@ -33,7 +33,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 
     case xPDOTransport::ACTION_UNINSTALL:
 
-        $transport->xpdo->removeObject(msPayment::class, ['class' => 'Oplati']);
+        $transport->xpdo->removeObject(msPayment::class, ['class' => OplatiHandler::class]);
 
         break;
 }
