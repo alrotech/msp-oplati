@@ -9,7 +9,29 @@
 
 $list = [
     'oplati' => [
-        'description' => 'Snippet for requesting payment data and generating the QR-code'
+        'description' => 'Snippet for requesting payment data and generating the QR-code',
+        'properties' => [
+            'oid' => [
+                'type' => 'numberfield',
+                'value' => ''
+            ],
+            'tpl' => [
+                'type' => 'textfield',
+                'value' => 'qrcode'
+            ],
+            'size' => [
+                'type' => 'numberfield',
+                'value' => 200
+            ],
+            'fillColor' => [
+                'type' => 'textfield',
+                'value' => 'ffffff'
+            ],
+            'pathColor' => [
+                'type' => 'textfield',
+                'value' => '000000'
+            ]
+        ]
     ],
 ];
 
@@ -30,6 +52,21 @@ foreach ($list as $k => $v) {
        'editor_type' => 0,
        'cache_type' => 0
    ], '', true, true);
+
+    $snippet->setProperties(
+        array_map(
+            static fn($key, $property) => array_merge(
+                [
+                    'name' => $key,
+                    'desc' => 'oplati-prop-' . $key,
+                    'lexicon' => 'mspoplati:properties',
+                ],
+                $property
+            ),
+            array_keys($v['properties']),
+            $v['properties']
+        )
+    );
 
     $snippets[] = $snippet;
 }

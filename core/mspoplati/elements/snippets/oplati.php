@@ -17,12 +17,16 @@ require $componentPath . 'vendor/autoload.php';
 
 # Options
 
-$orderId = $modx->getOption('msorder', $scriptProperties, $_GET['msorder']);
+$oid = $modx->getOption('oid', $scriptProperties);
 $tpl = $modx->getOption('tpl', $scriptProperties, 'qrcode');
 
 $size = $modx->getOption('size', $scriptProperties, '200');
 $fill = $modx->getOption('fillColor', $scriptProperties, 'ffffff');
 $path = $modx->getOption('pathColor', $scriptProperties, '000000');
+
+if (!$oid) {
+    $oid = (int)$_GET['msorder'];
+}
 
 // путь к js? - системные настройки онли?
 // путь к css? - системные настройки онли?
@@ -30,7 +34,7 @@ $path = $modx->getOption('pathColor', $scriptProperties, '000000');
 # Order handling
 
 /** @var msOrder $order */
-$order = $modx->getObject(msOrder::class, ['id' => $orderId]);
+$order = $modx->getObject(msOrder::class, ['id' => $oid]);
 
 $payment = $modx->getService('oplati', OplatiService::class)->requestPayment($order);
 
@@ -50,5 +54,5 @@ return $modx->getChunk($tpl, [
     'fill' => $fill,
     'path' => $path,
     'size' => $size,
-    'oid' => $order->get('id')
+    'oid'  => $oid
 ]);
