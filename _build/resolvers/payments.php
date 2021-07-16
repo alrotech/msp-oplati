@@ -21,7 +21,7 @@ switch ($options[xPDOTransport::PACKAGE_ACTION]) {
                 'name' => 'Oplati',
                 'description' => null,
                 'price' => 0,
-                'logo' => MODX_ASSETS_URL . 'components/mspoplati/oplati-logo-black.svg',
+//                'logo' => MODX_ASSETS_URL . 'components/mspoplati/oplati-logo-black.svg',
                 'rank' => 0,
                 'active' => 1,
                 'class' => OplatiHandler::class,
