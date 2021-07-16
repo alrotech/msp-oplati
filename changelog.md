@@ -1,3 +1,22 @@
+# [0.9.0](https://github.com/alroniks/mspOplati/compare/v0.8.0...v0.9.0) (2021-07-15)
+
+
+### Bug Fixes
+
+* proper usage of dto classes, fix composer psr-4 param ([bf20fec](https://github.com/alroniks/mspOplati/commit/bf20fecc241174dcb5fe6bad0463d3dbd2107624))
+* split handler and serivce interfaces to be compatibe with mspPaymentProps ([a5aecb8](https://github.com/alroniks/mspOplati/commit/a5aecb81cb0695b963f4ed61fde1812367737533))
+* stabilize chunk structure, replace labels by lexicon keys ([bf8ed59](https://github.com/alroniks/mspOplati/commit/bf8ed59e7351658ca3967b71de9d8c2af187b1c4))
+* use class name constant in the resolver to setup proper payment handler during installation ([b7299bc](https://github.com/alroniks/mspOplati/commit/b7299bc38c23adf8800ecc53358a3ba8fb513320))
+
+
+### Features
+
+* add default property set for the snippet `oplati` ([d8d6728](https://github.com/alroniks/mspOplati/commit/d8d6728aa22a4e75f83342621d9d20a68e2e5127))
+* split payment handler and payment service for better maintainability ([095577c](https://github.com/alroniks/mspOplati/commit/095577cac71bb74cbc9eb9919bd4212b6ff3c7df))
+* use DTO for payment response ([886e7a9](https://github.com/alroniks/mspOplati/commit/886e7a99613b5d6cf02a64665e11fb45b7025740))
+
+
+
 # [0.8.0](https://github.com/alroniks/mspOplati/compare/v0.7.0...v0.8.0) (2021-07-12)
 
 
