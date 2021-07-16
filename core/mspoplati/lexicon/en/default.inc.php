@@ -5,8 +5,9 @@
 $_lang = array_merge($_lang, [
     'oplati' => 'Oplati',
 
-    'oplati-info-message' => 'Order Nu payment',
+    'oplati-info-message' => 'Payment for order no. [[+num]]',
+    'oplati-help-message' => 'Please, scan the QR-code with the Oplati app.',
+    'oplati-mobile-button-text' => 'Pay via Oplati'
 
-    'oplati_info_message' => 'Order Nu payment 2',
 ]);
 

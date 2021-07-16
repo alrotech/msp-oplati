@@ -24,8 +24,6 @@ $_lang = array_merge($_lang, [
     'setting_oplati_developer_mode' => '',
     'setting_oplati_developer_mode_desc' => '',
 
-
-
     'setting_oplati_title_text' => '',
     'setting_oplati_title_text_desc' => '',
 
