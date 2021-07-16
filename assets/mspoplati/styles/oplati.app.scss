@@ -5,9 +5,42 @@
   border-radius: 0.75rem;
   box-shadow: 0 .25rem 0.75rem silver;
   padding: 1rem;
+  .oplati-mobile-block {
+    display: none;
+    margin-bottom: 1rem;
+    @media screen and (max-device-width: 768px) {
+      display: block;
+    }
+    .oplati-mobile-button {
+      border: 1px solid silver;
+      border-radius: 5px;
+      background: white;
+      font-size: .75rem;
+      font-weight: bold;
+      color: darkslategrey;
+      box-shadow: 0 3px 6px rgba(55, 55, 55, .2);
+    }
+  }
+  .oplati-help-message {
+    display: inline-block;
+    width: 50%;
+    font-size: 0.75rem;
+  }
   .oplati-code-block {
+    margin: 1rem 0;
+    @media screen and (max-device-width: 768px) {
+      display: none;
+    }
     img {
       margin: 0 auto;
     }
+  }
+  .oplati-timer-block {
+    margin-top: 1rem;
+    color: gray;
+  }
+  .oplati-status-block {
+    margin-top: 1rem;
+    color: dimgray;
   }
 }
