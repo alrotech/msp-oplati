@@ -49,10 +49,10 @@ $modx->regClientScript($assetsUrl . 'components/mspoplati/app/qrcode.min.js');
 $modx->regClientScript($assetsUrl . 'components/mspoplati/app/oplati.app.js');
 $modx->regClientCSS($assetsUrl . 'components/mspoplati/styles/oplati.app.css');
 
-return $modx->getChunk($tpl, [
+return $modx->getChunk($tpl, array_merge($order->toArray(), [
     'code' => $payment->dynamicQR,
     'fill' => $fill,
     'path' => $path,
     'size' => $size,
     'oid'  => $oid
-]);
+]));

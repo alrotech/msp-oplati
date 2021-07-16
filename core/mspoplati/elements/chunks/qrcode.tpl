@@ -1,6 +1,6 @@
 <div class="oplati-wrapper" data-size="[[+size]]" data-fill="[[+fill]]" data-path="[[+path]]" data-code="[[+code]]" data-oid="[[+oid]]">
 
-    <span class="oplati-info-message">[[%oplati-info-message]]</span>
+    <span class="oplati-info-message">[[!%oplati-info-message? &num=`[[+num]]`]]</span>
     <div class="oplati-code-block"></div>
     <span class="oplati-help-message">[[%oplati-help-message]]</span>
 

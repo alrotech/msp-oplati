@@ -23,6 +23,7 @@ class mspOplatiCheckPaymentProcessor extends modObjectGetProcessor
 
     public function beforeOutput()
     {
+// делаем проверку через сервис и записываем в свойства
 //        print_r($this->getProperties());
     }
 }
