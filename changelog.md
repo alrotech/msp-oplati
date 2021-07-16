@@ -1,3 +1,18 @@
+# [0.10.0](https://github.com/alroniks/mspOplati/compare/v0.9.0...v0.10.0) (2021-07-16)
+
+
+### Bug Fixes
+
+* improve view of the block with qr-code ([33fa40c](https://github.com/alroniks/mspOplati/commit/33fa40c6ad59245f3d527ec43eaffab12d4a061c))
+* pass to the chunk with qr-code order info as well ([30ddf45](https://github.com/alroniks/mspOplati/commit/30ddf4546eef86580ddb44e2ceda0ee32bf9c6d3))
+
+
+### Features
+
+* set up lexicons and start translating ([ceef9f1](https://github.com/alroniks/mspOplati/commit/ceef9f1b9c4dfbe3f6b958ad5660a8f5d6540ef6))
+
+
+
 # [0.9.0](https://github.com/alroniks/mspOplati/compare/v0.8.0...v0.9.0) (2021-07-15)
 
 
