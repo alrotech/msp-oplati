@@ -45,7 +45,6 @@ $order->save();
 
 $assetsUrl = $modx->getOption('assets_url');
 
-$modx->regClientScript($assetsUrl . 'components/mspoplati/app/qrcode.min.js');
 $modx->regClientScript($assetsUrl . 'components/mspoplati/app/oplati.app.js');
 $modx->regClientCSS($assetsUrl . 'components/mspoplati/styles/oplati.app.css');
 
