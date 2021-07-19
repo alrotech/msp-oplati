@@ -17,6 +17,8 @@ class Payment extends FlexibleDataTransferObject
 
     public int $status;
 
+    public ?string $humanStatus;
+
     public string $orderNumber;
 
     public ?string $dynamicQR;

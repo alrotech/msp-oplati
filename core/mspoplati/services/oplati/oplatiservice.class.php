@@ -19,7 +19,23 @@ use Lmc\HttpConstants\Header;
 
 class OplatiService implements OplatiBridgeInterface
 {
+    public const PAYMENT_STATUS_IN_PROGRESS = 'in-progress';
+    public const PAYMENT_STATUS_OK = 'ok';
+    public const PAYMENT_STATUS_DECLINE = 'decline';
+    public const PAYMENT_STATUS_NOT_ENOUGH = 'not-enough';
+    public const PAYMENT_STATUS_TIMEOUT = 'timeout';
+
+    public const HUMAN_STATUSES_MAP = [
+        0 => self::PAYMENT_STATUS_IN_PROGRESS,
+        1 => self::PAYMENT_STATUS_OK,
+        2 => self::PAYMENT_STATUS_DECLINE,
+        3 => self::PAYMENT_STATUS_NOT_ENOUGH,
+        4 => self::PAYMENT_STATUS_TIMEOUT,
+    ];
+
     private modX $modx;
+
+    private miniShop2 $minishopService;
 
     private array $config;
 
@@ -28,7 +44,54 @@ class OplatiService implements OplatiBridgeInterface
         $this->modx = $modx;
         $this->config = $config;
 
+        /** @var miniShop2 $ms */
+        $ms = $this->modx->getService('minishop2');
+        $this->minishopService = $ms;
+
         $this->modx->lexicon->load('mspoplati:default');
+    }
+
+    protected function getHumanStatus(int $status): string
+    {
+        if (!array_key_exists($status, static::HUMAN_STATUSES_MAP)) {
+            return $this->modx->lexicon('oplati-status-unknown');
+        }
+
+        return $this->modx->lexicon('oplati-status-' . static::HUMAN_STATUSES_MAP[$status]);
+    }
+
+    /**
+     * @param \msOrder $order
+     *
+     * @return \alroniks\mspoplati\dto\Payment
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \JsonException
+     * @throws \League\Uri\Contracts\UriException
+     */
+    public function processOrderStatus(msOrder $order): Payment
+    {
+        $payment = $this->requestStatus($order);
+
+        $payment->humanStatus = $this->getHumanStatus($payment->status);
+
+        $this->modx->log(modX::LOG_LEVEL_ERROR, print_r($payment->toArray(), true));
+
+        if (in_array($payment->status, [2,3,4])) {
+            $orderStatus = $this->config[OplatiGatewayInterface::OPTION_FAILURE_STATUS];
+        }
+
+        if ($payment->status === 1) {
+            $orderStatus = $this->config[OplatiGatewayInterface::OPTION_SUCCESS_STATUS];
+        }
+
+        if (!empty($orderStatus)) {
+            $currentContext = $this->modx->context->get('key');
+            $this->modx->switchContext('mgr');
+            $this->minishopService->changeOrderStatus($order->get('id'), $orderStatus);
+            $this->modx->switchContext($currentContext);
+        }
+
+        return $payment;
     }
 
     /**
@@ -78,15 +141,31 @@ class OplatiService implements OplatiBridgeInterface
         );
     }
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \JsonException
+     * @throws \League\Uri\Contracts\UriException
+     */
     public function requestStatus(msOrder $order): Payment
     {
         $this->setUpConfig($order);
 
-        // fetch paymentId from the order
+        $pid = $order->get('properties')['paymentId'];
 
         $response = $this->getClient()->request(
             Method::METHOD_GET,
-            (new UriTemplate('pos/payments/{pid}'))->expand(['pid' => 16703])
+            (string)(new UriTemplate('pos/payments/{pid}'))->expand(['pid' => $pid]),
+            [
+                'headers' => [
+                    'regNum' => $this->config[OplatiGatewayInterface::OPTION_CASH_REGISTER_NUMBER],
+                    'password' => $this->config[OplatiGatewayInterface::OPTION_CASH_PASSWORD],
+                    Header::CONTENT_TYPE => 'application/json',
+                ],
+            ]
+        );
+
+        return new Payment(
+            json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR)
         );
     }
 
@@ -96,6 +175,7 @@ class OplatiService implements OplatiBridgeInterface
         $payment = $order->getOne('Payment');
         $payment->loadHandler();
 
+        /** @noinspection PhpPossiblePolymorphicInvocationInspection */
         $this->config = $payment->handler->getProperties($payment);
 
         if ($this->config[OplatiGatewayInterface::OPTION_DEVELOPER_MODE]) {
