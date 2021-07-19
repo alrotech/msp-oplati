@@ -1,3 +1,12 @@
+## [0.10.1](https://github.com/alroniks/mspOplati/compare/v0.10.0...v0.10.1) (2021-07-16)
+
+
+### Bug Fixes
+
+* rename case of filename with service to be able to load it in modx ([974fede](https://github.com/alroniks/mspOplati/commit/974fedee6b2b92f5e6b2797845e433a3c0a98a1b))
+
+
+
 # [0.10.0](https://github.com/alroniks/mspOplati/compare/v0.9.0...v0.10.0) (2021-07-16)
 
 
