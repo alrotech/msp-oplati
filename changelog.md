@@ -1,3 +1,22 @@
+# [0.11.0](https://github.com/alroniks/mspOplati/compare/v0.10.1...v0.11.0) (2021-07-19)
+
+
+### Bug Fixes
+
+* make loading qrcode library from js application ([6deb88f](https://github.com/alroniks/mspOplati/commit/6deb88ffbc55a5edad8d0af1acb6d39f2e968de4))
+* make payment status visible always ([b50d1db](https://github.com/alroniks/mspOplati/commit/b50d1dbe2498e8fcb9f6b0e00fbefa53710693f2))
+* show translated status right after page loaded ([6d1d027](https://github.com/alroniks/mspOplati/commit/6d1d027dbbe64281ba21d5c852251da9dbaffa7b))
+
+
+### Features
+
+* finish processor for cheking payment state ([d71c8a4](https://github.com/alroniks/mspOplati/commit/d71c8a40ac7ea97af39138a538c6c166fe4479a9))
+* finished frontend application, now it handles statuses ([2fe2a50](https://github.com/alroniks/mspOplati/commit/2fe2a506c5afe3bc065e51bc006f2f86c71b325d))
+* handling payment statuses in the service ([afc528a](https://github.com/alroniks/mspOplati/commit/afc528ab3294515e1e3af0be82fbcb544d2f8db5))
+* translations and human text for payment statuses ([8422eda](https://github.com/alroniks/mspOplati/commit/8422eda98855d085c788aacd722f46e46ee71e9b))
+
+
+
 ## [0.10.1](https://github.com/alroniks/mspOplati/compare/v0.10.0...v0.10.1) (2021-07-16)
 
 
