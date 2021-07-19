@@ -15,16 +15,32 @@ class mspOplatiCheckPaymentProcessor extends modObjectGetProcessor
 
     public $languageTopics = ['mspoplati:default'];
 
-//    protected $status;
+    private OplatiService $oplatiService;
 
-//    public function process()
-//    {
-//    }
-
-    public function beforeOutput()
+    public function __construct(modX $modx, array $properties = [])
     {
-// делаем проверку через сервис и записываем в свойства
-//        print_r($this->getProperties());
+        parent::__construct($modx, $properties);
+
+        /** @var OplatiService $service */
+        $service = $this->modx->getService('oplati', OplatiService::class);
+
+        $this->oplatiService = $service;
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \JsonException
+     * @throws \League\Uri\Contracts\UriException
+     */
+    public function beforeOutput(): void
+    {
+        /** @var msOrder $order */
+        $order = $this->object;
+
+        $status = $this->oplatiService->processOrderStatus($order);
+
+        $this->object->set('properties', array_merge($this->object->get('properties'), $status->toArray()));
+        $this->object->save(true);
     }
 }
 
