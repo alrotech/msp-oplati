@@ -7,3 +7,8 @@ github:
   another_url: another value
 title: mspOplati
 #description: [A short description of your site's purpose]
+
+plugins:
+  - jekyll-multiple-languages-plugin
+languages: ["ru", "be"]
+exclude_from_localizations: ["assets"]
