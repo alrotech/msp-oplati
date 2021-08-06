@@ -9,7 +9,7 @@ $_lang = array_merge($_lang, [
     'area_oplati_statuses' => 'Statuses',
     'area_oplati_pages' => 'Pages',
 
-    'setting_oplati_cash_register_number' => '',
+    'setting_oplati_cash_register_number' => 'Cach register number',
     'setting_oplati_cash_register_number_desc' => '',
 
     'setting_oplati_cash_password' => '',
