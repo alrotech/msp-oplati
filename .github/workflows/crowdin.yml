@@ -20,5 +20,4 @@ jobs:
           download_translations: true
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
-          CROWDIN_PROJECT_ID: ${{ secrets.crowdin_project_id }}
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.crowdin_personal_token }}
