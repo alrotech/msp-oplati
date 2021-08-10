@@ -1,3 +1,5 @@
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
 const oWrapper = '.oplati-wrapper';
 const oCodeBlock = '.oplati-code-block';
 const oInfoMessage = '.oplati-info-message';
@@ -31,6 +33,10 @@ function initQRCodeBlock()
     document
         .querySelectorAll(oWrapper)
         .forEach(block => {
+
+            if (isMobile) {
+                return;
+            }
 
             const qrCode = new QRCode(block.querySelector(oCodeBlock), {
                 width: block.dataset.size,

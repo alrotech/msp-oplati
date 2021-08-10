@@ -12,9 +12,8 @@ require __DIR__ . '/vendor/autoload.php';
 use alroniks\mspoplati\OplatiGatewayInterface;
 
 if (!class_exists('ConfigurablePaymentHandler')) {
-    $path = MODX_CORE_PATH. 'components/mspaymentprops/ConfigurablePaymentHandler.class.php';
+    $path = MODX_CORE_PATH . 'components/mspaymentprops/ConfigurablePaymentHandler.class.php';
     if (is_readable($path)) {
-        /** @noinspection PhpIncludeInspection */
         require_once $path;
     }
 }
@@ -56,7 +55,3 @@ class OplatiHandler extends ConfigurablePaymentHandler implements OplatiGatewayI
         );
     }
 }
-
-// - вынести пути к файлам скриптов в системные настройки
-// - описать системные настройки и сделать переводы
-// - добавить setup options при установке пакета
