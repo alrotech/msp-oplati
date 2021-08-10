@@ -2,7 +2,13 @@ name: Automatic Release
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+    types:
+      - closed
 
 jobs:
   release:
