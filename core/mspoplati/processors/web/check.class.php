@@ -7,6 +7,8 @@
 
 declare(strict_types = 1);
 
+use alroniks\mspoplati\dto\Payment;
+
 /** @noinspection AutoloadingIssuesInspection */
 
 class mspOplatiCheckPaymentProcessor extends modObjectGetProcessor
@@ -29,10 +31,28 @@ class mspOplatiCheckPaymentProcessor extends modObjectGetProcessor
 
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \League\Uri\Contracts\UriException
+     * @throws \JsonException
+     */
+    public function process()
+    {
+        $payment = $this->beforeOutput();
+
+        if ($payment->returnUrl && $this->getProperty('return')) {
+            $this->modx->sendRedirect($payment->returnUrl);
+
+            return null;
+        }
+
+        return $this->cleanup();
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \JsonException
      * @throws \League\Uri\Contracts\UriException
      */
-    public function beforeOutput(): void
+    public function beforeOutput(): Payment
     {
         /** @var msOrder $order */
         $order = $this->object;
@@ -41,6 +61,8 @@ class mspOplatiCheckPaymentProcessor extends modObjectGetProcessor
 
         $this->object->set('properties', array_merge($this->object->get('properties'), $status->toArray()));
         $this->object->save(true);
+
+        return $status;
     }
 }
 

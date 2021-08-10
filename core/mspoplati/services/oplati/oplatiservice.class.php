@@ -1,4 +1,6 @@
-<?php /** @noinspection AutoloadingIssuesInspection */
+<?php
+/** @noinspection AutoloadingIssuesInspection */
+
 /**
  * Copyright (c) Ivan Klimchuk - All Rights Reserved
  * Unauthorized copying, changing, distributing this file, via any medium, is strictly prohibited.
@@ -72,17 +74,26 @@ class OplatiService implements OplatiBridgeInterface
     {
         $payment = $this->requestStatus($order);
 
-        $payment->humanStatus = $this->getHumanStatus($payment->status);
+        $this->modx->log(xPDO::LOG_LEVEL_ERROR, print_r($payment->toArray(), true));
 
-        $this->modx->log(modX::LOG_LEVEL_ERROR, print_r($payment->toArray(), true));
-
-        if (in_array($payment->status, [2,3,4])) {
+        if (in_array($payment->status, [2, 3, 4])) {
             $orderStatus = $this->config[OplatiGatewayInterface::OPTION_FAILURE_STATUS];
+            $page = $this->config[OplatiGatewayInterface::OPTION_FAILURE_PAGE];
         }
 
         if ($payment->status === 1) {
             $orderStatus = $this->config[OplatiGatewayInterface::OPTION_SUCCESS_STATUS];
+            $page = $this->config[OplatiGatewayInterface::OPTION_SUCCESS_PAGE];
         }
+
+        $payment->humanStatus = $this->getHumanStatus($payment->status);
+
+        $payment->returnUrl = $this->modx->makeUrl(
+            $page ?? $this->modx->getOption('site_start'),
+            $this->modx->context->get('key'),
+            modX::toQueryString(['msorder' => $order->get('id')]),
+            'full'
+        );
 
         if (!empty($orderStatus)) {
             $currentContext = $this->modx->context->get('key');
@@ -102,13 +113,27 @@ class OplatiService implements OplatiBridgeInterface
     {
         $this->setUpConfig($order);
 
-        $items = array_values(array_map(static fn(msOrderProduct $product) => [
-            'type' => 1,
-            'name' => $product->get('name'),
-            'price' => $product->get('price'),
-            'quantity' => $product->get('count'),
-            'cost' => $product->get('cost'),
-        ], $this->modx->getCollection(msOrderProduct::class, ['order_id' => $order->get('id')])));
+        $items = array_values(
+            array_map(static fn(msOrderProduct $product) => [
+                'type' => 1,
+                'name' => $product->get('name'),
+                'price' => $product->get('price'),
+                'quantity' => $product->get('count'),
+                'cost' => $product->get('cost'),
+            ], $this->modx->getCollection(msOrderProduct::class, ['order_id' => $order->get('id')]))
+        );
+
+        $returnUrl = implode('?', [
+            $this->modx->getOption('site_url') . 'assets/components/mspoplati/connector.php',
+            http_build_query(
+                [
+                     'ctx' => 'web',
+                     'action' => 'check',
+                     'id' => $order->get('id'),
+                     'return' => true,
+                ]
+            ),
+        ]);
 
         // todo: replace by dto or vo?
         $request = [
@@ -116,15 +141,16 @@ class OplatiService implements OplatiBridgeInterface
             'orderNumber' => $order->get('id'),
             'details' => [
                 'receiptNumber' => $order->get('num'),
-                'regNum' => $this->config[OplatiGatewayInterface::OPTION_PRINT_CASH_REGISTER_NUMBER] ? $this->config[self::OPTION_CASH_REGISTER_NUMBER] : '',
+                'regNum' => $this->config[OplatiGatewayInterface::OPTION_PRINT_CASH_REGISTER_NUMBER]
+                    ? $this->config[OplatiGatewayInterface::OPTION_CASH_REGISTER_NUMBER] : '',
                 'items' => $items,
                 'amountTotal' => $order->get('cost'),
                 'title' => $this->config[OplatiGatewayInterface::OPTION_TITLE_TEXT],
                 'headerInfo' => $this->config[OplatiGatewayInterface::OPTION_HEADER_TEXT],
                 'footerInfo' => $this->config[OplatiGatewayInterface::OPTION_FOOTER_TEXT],
             ],
-            'successUrl' => $this->modx->getOption('site_url') . '?' . http_build_query(['result' => 'success', 'msorder' => $order->get('id')]),
-            'failureUrl' => $this->modx->getOption('site_url') . '?' . http_build_query(['result' => 'failure', 'msorder' => $order->get('id')]),
+            'successUrl' => $returnUrl,
+            'failureUrl' => $returnUrl,
         ];
 
         $response = $this->getClient()->request(Method::METHOD_POST, 'pos/webPayments', [
@@ -133,7 +159,7 @@ class OplatiService implements OplatiBridgeInterface
                 'password' => $this->config[OplatiGatewayInterface::OPTION_CASH_PASSWORD],
                 Header::CONTENT_TYPE => 'application/json',
             ],
-            'json' => $request
+            'json' => $request,
         ]);
 
         return new Payment(

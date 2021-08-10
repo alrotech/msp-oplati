@@ -9,7 +9,8 @@
 /** @var array $scriptProperties */
 
 $componentPath = $modx->getOption(
-    'mspoplati.core_path', null,
+    'mspoplati.core_path',
+    null,
     $modx->getOption('core_path') . 'components/mspoplati/'
 );
 
@@ -28,9 +29,6 @@ if (!$oid) {
     $oid = (int)$_GET['msorder'];
 }
 
-// путь к js? - системные настройки онли?
-// путь к css? - системные настройки онли?
-
 # Order handling
 
 /** @var msOrder $order */
@@ -45,13 +43,20 @@ $order->save();
 
 $assetsUrl = $modx->getOption('assets_url');
 
-$modx->regClientScript($assetsUrl . 'components/mspoplati/app/oplati.app.js');
-$modx->regClientCSS($assetsUrl . 'components/mspoplati/styles/oplati.app.css');
+// путь к js? - системные настройки онли?
+// путь к css? - системные настройки онли?
 
-return $modx->getChunk($tpl, array_merge($order->toArray(), [
-    'code' => $payment->dynamicQR,
-    'fill' => $fill,
-    'path' => $path,
-    'size' => $size,
-    'oid'  => $oid
-]));
+$noCache = bin2hex(random_bytes(4));
+$modx->regClientScript($assetsUrl . 'components/mspoplati/app/oplati.app.js?nocache=' . $noCache);
+$modx->regClientCSS($assetsUrl . 'components/mspoplati/styles/oplati.app.css?nocache=' . $noCache);
+
+return $modx->getChunk(
+    $tpl,
+    array_merge($order->toArray(), [
+        'code' => $payment->dynamicQR,
+        'fill' => $fill,
+        'path' => $path,
+        'size' => $size,
+        'oid' => $oid,
+    ])
+);
