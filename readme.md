@@ -1,5 +1,9 @@
 # mspOplati &mdash; payment module for miniShop2
 
+[![Automatic i18n](https://github.com/mspay/msp-oplati/actions/workflows/crowdin.yml/badge.svg?branch=master)](https://github.com/mspay/msp-oplati/actions/workflows/crowdin.yml)
+[![Automatic Release](https://github.com/mspay/msp-oplati/actions/workflows/release.yml/badge.svg)](https://github.com/mspay/msp-oplati/actions/workflows/release.yml)
+[![Automatic Build](https://github.com/mspay/msp-oplati/actions/workflows/package.yml/badge.svg)](https://github.com/mspay/msp-oplati/actions/workflows/package.yml)
+
 ### About
 
 This MODX extra allows easy integrate payment system provider Oplati into MODX and miniShop2. The latest one is the popular e-commerce engine for MODX, which provides a huge ecosystem solutions for internet selling. Module provides easy way to tune miniShop2 to make possible accept payment from customers using payment gateway Oplati.
