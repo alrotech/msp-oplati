@@ -8,7 +8,7 @@
 }
 .oplati-wrapper .oplati-mobile-block {
   display: none;
-  margin-bottom: 1rem;
+  margin: 2rem 0;
 }
 @media screen and (max-device-width: 768px) {
   .oplati-wrapper .oplati-mobile-block {
@@ -19,15 +19,21 @@
   border: 1px solid silver;
   border-radius: 5px;
   background: white;
-  font-size: 0.75rem;
+  font-size: 1rem;
   font-weight: bold;
   color: darkslategrey;
   box-shadow: 0 3px 6px rgba(55, 55, 55, 0.2);
+  padding: 0.75rem 1.25rem;
 }
 .oplati-wrapper .oplati-help-message {
   display: inline-block;
   width: 50%;
   font-size: 0.75rem;
+}
+@media screen and (max-device-width: 768px) {
+  .oplati-wrapper .oplati-help-message {
+    display: none;
+  }
 }
 .oplati-wrapper .oplati-code-block {
   margin: 1rem 0;
@@ -44,10 +50,20 @@
   margin-top: 1rem;
   color: gray;
 }
+@media screen and (max-device-width: 768px) {
+  .oplati-wrapper .oplati-timer-block {
+    display: none;
+  }
+}
 .oplati-wrapper .oplati-status-block {
   margin-top: 1rem;
   color: dimgray;
   font-size: 0.75rem;
+}
+@media screen and (max-device-width: 768px) {
+  .oplati-wrapper .oplati-status-block {
+    display: none;
+  }
 }
 
 /*# sourceMappingURL=oplati.app.css.map */
