@@ -1,8 +1,8 @@
 # mspOplati &mdash; payment module for miniShop2
 
-[![Automatic i18n](https://github.com/mspay/msp-oplati/actions/workflows/crowdin.yml/badge.svg?branch=master)](https://github.com/mspay/msp-oplati/actions/workflows/crowdin.yml)
-[![Automatic Release](https://github.com/mspay/msp-oplati/actions/workflows/release.yml/badge.svg)](https://github.com/mspay/msp-oplati/actions/workflows/release.yml)
-[![Automatic Build](https://github.com/mspay/msp-oplati/actions/workflows/package.yml/badge.svg)](https://github.com/mspay/msp-oplati/actions/workflows/package.yml)
+[![Automatic Releasing](https://github.com/mspay/msp-oplati/actions/workflows/release.yml/badge.svg)](https://github.com/mspay/msp-oplati/actions/workflows/release.yml)
+[![Automatic Building](https://github.com/mspay/msp-oplati/actions/workflows/package.yml/badge.svg)](https://github.com/mspay/msp-oplati/actions/workflows/package.yml)
+[![Automatic Translating](https://github.com/mspay/msp-oplati/actions/workflows/crowdin.yml/badge.svg?branch=master)](https://github.com/mspay/msp-oplati/actions/workflows/crowdin.yml)
 
 ### About
 
