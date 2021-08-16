@@ -65,5 +65,25 @@
     display: none;
   }
 }
+.oplati-wrapper .oplati-renew-block {
+  padding: 0.75rem 0 0;
+  display: none;
+}
+.oplati-wrapper .oplati-renew-block .oplati-renew-button {
+  border: 1px solid silver;
+  border-radius: 5px;
+  background: white;
+  font-size: 0.75rem;
+  line-height: calc(1.75rem - 2px);
+  padding: 0 1rem;
+  box-shadow: 0 3px 6px rgba(55, 55, 55, 0.2);
+}
+.oplati-wrapper .oplati-renew-block .oplati-renew-button svg {
+  height: 1rem;
+  width: 1rem;
+  position: relative;
+  top: -1px;
+  margin-right: 0.5rem;
+}
 
 /*# sourceMappingURL=oplati.app.css.map */
