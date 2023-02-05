@@ -12,3 +12,4 @@ $_lang['oplati-status-decline'] = 'Payment canceled';
 $_lang['oplati-status-not-enough'] = 'Insufficient funds';
 $_lang['oplati-status-timeout'] = 'Payment is overdue';
 $_lang['oplati-status-unknown'] = 'Unknown status';
+$_lang['oplati-renew-button-text'] = 'Renew code';
